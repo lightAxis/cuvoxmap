@@ -1,4 +1,4 @@
-#include <cuvoxmap/MapAllocater.hpp>
+#include <cuvoxmap/MapAllocator.hpp>
 #include <cuvoxmap/base/MapImpl.hpp>
 #include <cuvoxmap/base/ArrayAllocator.hpp>
 
@@ -45,6 +45,4 @@ namespace cuvoxmap
     template class MapAllocator<uint16_t, 3>;
     template class MapAllocator<float, 2>;
     template class MapAllocator<float, 3>;
-    template class MapAllocator<double, 2>;
-    template class MapAllocator<double, 3>;
 }

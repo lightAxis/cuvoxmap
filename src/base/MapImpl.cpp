@@ -28,6 +28,4 @@ namespace cuvoxmap
     template class MapImpl<uint16_t, 3>;
     template class MapImpl<float, 2>;
     template class MapImpl<float, 3>;
-    template class MapImpl<double, 2>;
-    template class MapImpl<double, 3>;
 };

@@ -47,7 +47,7 @@ namespace cuvoxmap
             }
             return index;
         }
-        __device__ uint32_t merge_device(const Vector<uint32_t, Dim> &idx) const
+        __host__ __device__ uint32_t merge_device(const Vector<uint32_t, Dim> &idx) const
         {
             uint32_t index = 0;
             uint32_t multiplier = 1;
@@ -70,7 +70,7 @@ namespace cuvoxmap
             return indices;
         }
 
-        __device__ Vector<uint32_t, Dim> split_device(uint32_t idx) const
+        __host__ __device__ Vector<uint32_t, Dim> split_device(uint32_t idx) const
         {
             Vector<uint32_t, Dim> indices;
             for (int i = 0; i < Dim; ++i)

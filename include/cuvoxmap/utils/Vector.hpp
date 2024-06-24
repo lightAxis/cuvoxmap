@@ -17,7 +17,7 @@ namespace cuvoxmap
         T data[Dim];
         Vector() = default;
         template <typename... Args, typename = typename std::enable_if<sizeof...(Args) == Dim>::type>
-        __host__ __device__ explicit Vector(Args... args) : data{static_cast<uint32_t>(args)...}
+        __host__ __device__ explicit Vector(Args... args) : data{static_cast<T>(args)...}
         {
             static_assert(sizeof...(Args) == Dim, "Number of arguments must match the dimension of the Vector object");
         }
@@ -42,6 +42,23 @@ namespace cuvoxmap
                 sum *= data[i];
             }
             return sum;
+        }
+
+        __host__ __device__ bool operator==(const Vector<T, Dim> &other) const
+        {
+            for (uint8_t i = 0; i < Dim; i++)
+            {
+                if (data[i] != other.data[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        __host__ __device__ bool operator!=(const Vector<T, Dim> &other) const
+        {
+            return !(*this == other);
         }
     };
     using Idx1D = Vector<uint32_t, 1>;

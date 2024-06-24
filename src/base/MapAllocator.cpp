@@ -47,6 +47,4 @@ namespace cuvoxmap
     template class MapAllocator<uint16_t, 3>;
     template class MapAllocator<float, 2>;
     template class MapAllocator<float, 3>;
-    template class MapAllocator<double, 2>;
-    template class MapAllocator<double, 3>;
 }
