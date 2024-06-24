@@ -15,7 +15,8 @@ project(
 )
 
 ## compile options
-set(CUVOXMAP_USING_CUDA OFF)
+set(CUVOXMAP_USING_CUDA ON)
+set(BUILD_TESTING ON)
 
 ## enabling cuda
 if(CUVOXMAP_USING_CUDA)
@@ -42,20 +43,24 @@ endif()
 include_directories(include)
 
 if(CUVOXMAP_USING_CUDA)
-    add_library(cuvoxmap 
+    add_library(cuvoxmap_gpu 
         src/base/MapAllocator.cu 
         src/base/MapImpl.cu)
-else()
-    add_library(cuvoxmap 
-        src/base/MapAllocator.cpp 
-        src/base/MapImpl.cpp)
 endif()
+add_library(cuvoxmap_cpu 
+    src/base/MapAllocator.cpp 
+    src/base/MapImpl.cpp)
 # if(CUVOXMAP_USING_CUDA)
 #     target_compile_definitions(cuvoxmap PUBLIC CUVOXMAP_USING_CUDA)
 # endif()
-add_library(cuvoxmap::main ALIAS cuvoxmap)
+add_library(cuvoxmap::cpu ALIAS cuvoxmap_cpu)
+add_library(cuvoxmap::gpu ALIAS cuvoxmap_gpu)
 
-add_subdirectory(test)
+## TESTING
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
+    enable_testing()
+    add_subdirectory(test)
+endif()
 
 
 # add_library(cuvoxmap)

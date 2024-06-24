@@ -1,8 +1,7 @@
 
-find_package(Catch2 3 REQUIRED)
+find_package(Catch2 REQUIRED)
+include (CTest)
 include(Catch)
-
-set(TEST_TARGETS "")
 
 function(add_test_executable)
 
@@ -14,17 +13,27 @@ function(add_test_executable)
         ${ARGN})
     
     add_executable(${EXEC_NAME} ${ARGS_SRCS})
-    target_link_libraries(${EXEC_NAME} PRIVATE Catch2::Catch2)
+    target_link_libraries(${EXEC_NAME} PRIVATE Catch2::Catch2WithMain)
     if(NOT ${ARGS_LIBS} EQUAL "")
         target_link_libraries(${EXEC_NAME} PRIVATE ${ARGS_LIBS})
     endif()
-
-    set(TEST_TARGETS ${TEST_TARGETS} ${EXEC_NAME} PARENT_SCOPE)
+    
+    catch_discover_tests(${EXEC_NAME})
+    message(STATUS "Adding test executable: ${EXEC_NAME}")
 endfunction()
 
-add_test_executable(main_test SRCS main_test.cpp LIBS cuvoxmap)
+add_test_executable(Vectors_cpu         SRCS Vectors.cpp        LIBS cuvoxmap_cpu)
+add_test_executable(ArrayIndexing_cpu   SRCS ArrayIndexing.cpp  LIBS cuvoxmap_cpu)
+add_test_executable(ArrayAllocator_cpu  SRCS ArrayAllocator.cpp LIBS cuvoxmap_cpu)
+add_test_executable(MapAllocator_cpu    SRCS MapAllocator.cpp   LIBS cuvoxmap_cpu)
+add_test_executable(MapAccessorHost_cpu SRCS MapAccessorHost.cpp LIBS cuvoxmap_cpu)
 
-foreach(target ${TEST_TARGETS})
-    message(STATUS "Adding test : ${target}")
-    catch_discover_tests(${target})
-endforeach()
+add_test_executable(Vectors_gpu         SRCS Vectors.cu         LIBS cuvoxmap_gpu)
+add_test_executable(ArrayIndexing_gpu   SRCS ArrayIndexing.cu   LIBS cuvoxmap_gpu)
+add_test_executable(ArrayAllocator_gpu  SRCS ArrayAllocator.cu  LIBS cuvoxmap_gpu)
+add_test_executable(MapAllocator_gpu    SRCS MapAllocator.cu    LIBS cuvoxmap_gpu)
+add_test_executable(MapAccessorHost_gpu SRCS MapAccessorHost.cu LIBS cuvoxmap_gpu)
+add_test_executable(MapAccessorDevice_gpu SRCS MapAccessorDevice.cu LIBS cuvoxmap_gpu)
+
+
+
