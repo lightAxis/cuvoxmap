@@ -1,5 +1,5 @@
-#include <cuvoxmap/MapAllocator.hpp>
-#include <cuvoxmap/MapAccessorHost.hpp>
+#include <cuvoxmap/base/MapAllocator.hpp>
+#include <cuvoxmap/base/MapAccessorHost.hpp>
 #include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("MapAccessorHost cpu")

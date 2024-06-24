@@ -1,4 +1,4 @@
-#include <cuvoxmap/MapAllocator.hpp>
+#include <cuvoxmap/base/MapAllocator.hpp>
 #include <cuvoxmap/base/MapImpl.hpp>
 #include <cuvoxmap/base/ArrayAllocator.hpp>
 

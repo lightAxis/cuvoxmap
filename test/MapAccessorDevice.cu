@@ -1,5 +1,5 @@
-#include <cuvoxmap/MapAllocator.hpp>
-#include <cuvoxmap/MapAccessorDevice.cuh>
+#include <cuvoxmap/base/MapAllocator.hpp>
+#include <cuvoxmap/base/MapAccessorDevice.cuh>
 #include <catch2/catch_test_macros.hpp>
 #include "device_testmacros.cuh"
 

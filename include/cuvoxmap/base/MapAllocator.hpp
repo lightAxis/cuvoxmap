@@ -1,7 +1,7 @@
 #pragma once
 
-#include "utils/ArrayIndexing.hpp"
-#include "base/MapData.hpp"
+#include "../utils/ArrayIndexing.hpp"
+#include "MapData.hpp"
 
 namespace cuvoxmap
 {

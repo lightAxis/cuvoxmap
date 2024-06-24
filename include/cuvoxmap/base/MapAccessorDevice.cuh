@@ -1,7 +1,7 @@
 #pragma once
 
-#include "base/MapData.hpp"
-#include "utils/ArrayIndexing.hpp"
+#include "MapData.hpp"
+#include "../utils/ArrayIndexing.hpp"
 
 #include <stdexcept>
 
