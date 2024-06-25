@@ -8,7 +8,7 @@ namespace cuvoxmap
         param_.y_axis_len = init.y_axis_len;
         param_.resolution = init.resolution;
 
-        Idx2D dims{init.x_axis_len, init.y_axis_len};
+        uIdx2D dims{init.x_axis_len, init.y_axis_len};
 
         p_map_alloc_ = MapAllocator<float, 2>(dims);
         o_map_alloc_ = MapAllocator<uint8_t, 2>(dims);

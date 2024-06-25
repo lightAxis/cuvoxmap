@@ -4,7 +4,7 @@
 
 TEST_CASE("MapAllocator gpu")
 {
-    cuvoxmap::Idx3D dims{5, 6, 7};
+    cuvoxmap::uIdx3D dims{5, 6, 7};
     cuvoxmap::MapAllocator<float, 3> mapAlloc{dims};
 
     SECTION("basics")
@@ -14,6 +14,6 @@ TEST_CASE("MapAllocator gpu")
         REQUIRE(mapData.device_data != nullptr);
         REQUIRE(mapData.is_gpu_used == true);
 
-        REQUIRE(mapData.axis_sizes == cuvoxmap::Idx3D{5, 6, 7});
+        REQUIRE(mapData.axis_sizes == cuvoxmap::uIdx3D{5, 6, 7});
     }
 }
