@@ -2,12 +2,18 @@
 
 #include "Vector.hpp"
 #include <vector>
+#include <type_traits>
+#include <cassert>
 
 namespace cuvoxmap
 {
     template <typename T, uint8_t Dim>
     class RayCaster
     {
+        static_assert(std::is_same_v<T, float> ||
+                          std::is_same_v<T, double>,
+                      "RayCaster only supports float or double");
+
     public:
         __host__ __device__ RayCaster() = default;
         __host__ __device__ RayCaster(const Vector<T, Dim> &startPos, const Vector<T, Dim> &endPos, T grid_res)
@@ -31,9 +37,9 @@ namespace cuvoxmap
         __host__ __device__ Vector<T, Dim> get_EndPos() const { return endPos_; }
         __host__ __device__ T get_Res() const { return res_; }
 
-        __host__ __device__ get_linePts_count() const { return max_count_; }
+        __host__ __device__ uint32_t get_linePts_count() const { return max_count_; }
 
-        __host__ __device__ bool get_next_pt()(Vector<T, Dim> &pt)
+        __host__ __device__ bool get_next_pt(Vector<T, Dim> &pt)
         {
             if (isFinished())
                 return false;
@@ -46,7 +52,7 @@ namespace cuvoxmap
             return true;
         }
 
-        __host__ __device__ bool isFinished() { return idx_ >= max_count_ - 1; }
+        __host__ __device__ bool isFinished() { return idx_ >= max_count_; }
         __host__ __device__ void reset_to_begin() { idx_ = 0; }
 
         __host__ std::vector<Vector<T, Dim>> get_all_pts()

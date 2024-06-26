@@ -1,5 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
-#include "device_testmacros.cuh"
+#include "custom_matchers/device_testmacros.cuh"
 #include <cuvoxmap/utils/ArrayIndexing.hpp>
 
 TEST_CASE("ArrayIndexing gpu host", "utils")
@@ -20,7 +20,7 @@ TEST_CASE("ArrayIndexing gpu host", "utils")
 __global__ void indexing_(cuvoxmap::Indexing<3> idxing)
 {
 }
-TEST_CASE("indexing gpu device")
+TEST_CASE("ArrayIndexing gpu device")
 {
     cuvoxmap::Indexing<3> indexing(cuvoxmap::uIdx3D{2, 3, 4});
 

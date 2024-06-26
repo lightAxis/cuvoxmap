@@ -1,7 +1,7 @@
 #include <cuvoxmap/base/MapAllocator.hpp>
 #include <cuvoxmap/base/MapAccessorDevice.cuh>
 #include <catch2/catch_test_macros.hpp>
-#include "device_testmacros.cuh"
+#include "custom_matchers/device_testmacros.cuh"
 
 __global__ void cpu_basic_kernel(cuvoxmap::MapAccesssorDevice<float, 2> map)
 {

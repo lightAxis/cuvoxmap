@@ -5,7 +5,7 @@ include(add_compile_warnings)
 include(parse_git_tag)
 include(detect_nvcc_version)
 
-cmake_policy(SET CMP0104 NEW)
+# cmake_policy(SET CMP0104 NEW)
 
 project(
     cuvoxmap
@@ -22,6 +22,7 @@ set(BUILD_TESTING ON)
 if(CUVOXMAP_USING_CUDA)
     find_package(CUDA REQUIRED)
     detect_nvcc_version(NVCC_VERSION REQUIRED 12.3)
+    set(CMAKE_CUDA_ARCHITECTURES 86)
     message(STATUS "CUDA DETECTED : ARCH " ${CMAKE_CUDA_ARCHITECTURES} " VERSION " ${NVCC_VERSION})
 endif()
 

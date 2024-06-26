@@ -27,6 +27,7 @@ add_test_executable(ArrayIndexing_cpu   SRCS ArrayIndexing.cpp  LIBS cuvoxmap_cp
 add_test_executable(ArrayAllocator_cpu  SRCS ArrayAllocator.cpp LIBS cuvoxmap_cpu)
 add_test_executable(MapAllocator_cpu    SRCS MapAllocator.cpp   LIBS cuvoxmap_cpu)
 add_test_executable(MapAccessorHost_cpu SRCS MapAccessorHost.cpp LIBS cuvoxmap_cpu)
+add_test_executable(RayCaster_cpu       SRCS RayCaster.cpp      LIBS cuvoxmap_cpu)
 
 add_test_executable(Vectors_gpu         SRCS Vectors.cu         LIBS cuvoxmap_gpu)
 add_test_executable(ArrayIndexing_gpu   SRCS ArrayIndexing.cu   LIBS cuvoxmap_gpu)

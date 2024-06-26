@@ -13,9 +13,18 @@
 
 #include <cstdint>
 #include <initializer_list>
+#include <cmath>
 
 namespace cuvoxmap
 {
+    namespace VectorImpl
+    {
+        struct Impl
+        {
+            static __host__ __device__ float sqrt_fd(float x) { return sqrtf(x); }
+            static __host__ __device__ double sqrt_fd(double x) { return sqrt(x); }
+        };
+    }
     /**
      * @brief A simple vector class, designed to deal with fixed-size vectors include device kernels
      */
@@ -212,9 +221,9 @@ namespace cuvoxmap
                                    data[2] * other.data[0] - data[0] * other.data[2],
                                    data[0] * other.data[1] - data[1] * other.data[0]});
         }
-
-        __host__ __device__ T norm() const { return sqrt(dot(*this)); }
         __host__ __device__ T normSquared() const { return dot(*this); }
+        __host__ __device__ T norm() const { return VectorImpl::Impl::sqrt_fd(normSquared()); }
+
         __host__ __device__ Vector<T, Dim> normalized() const { return *this / norm(); }
         __host__ __device__ Vector<T, Dim> &normalize() { return *this /= norm(); }
 

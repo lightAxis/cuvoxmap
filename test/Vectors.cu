@@ -1,5 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
-#include "device_testmacros.cuh"
+#include "custom_matchers/device_testmacros.cuh"
 
 #include <cuvoxmap/utils/Vector.hpp>
 
