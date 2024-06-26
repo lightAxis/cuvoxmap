@@ -9,8 +9,8 @@ TEST_CASE("MapAccessorHost cpu")
 
     SECTION("cpu basic")
     {
-        accessor.set_value(1, cuvoxmap::uIdx2D{1, 2});
-        accessor.set_value(2, cuvoxmap::uIdx2D{2, 3});
+        accessor.set_value(cuvoxmap::uIdx2D{1, 2}, 1);
+        accessor.set_value(cuvoxmap::uIdx2D{2, 3}, 2);
 
         REQUIRE(accessor.get_value(cuvoxmap::uIdx2D{1, 2}) == 1);
         REQUIRE(accessor.get_value(cuvoxmap::uIdx2D{2, 3}) == 2);

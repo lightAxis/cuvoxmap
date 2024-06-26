@@ -50,7 +50,8 @@ if(CUVOXMAP_USING_CUDA)
 endif()
 add_library(cuvoxmap_cpu 
     src/base/MapAllocator.cpp 
-    src/base/MapImpl.cpp)
+    src/base/MapImpl.cpp
+    src/cuvoxmap.cpp)
 # if(CUVOXMAP_USING_CUDA)
 #     target_compile_definitions(cuvoxmap PUBLIC CUVOXMAP_USING_CUDA)
 # endif()

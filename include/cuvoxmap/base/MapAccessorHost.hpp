@@ -15,7 +15,7 @@ namespace cuvoxmap
         ~MapAccesssorHost() = default;
 
         inline T get_value(const Vector<uint32_t, Dim> &idx) const { return map_data_.host_data[indexing_.merge(idx)]; }
-        inline void set_value(T value, Vector<uint32_t, Dim> idx) { map_data_.host_data[indexing_.merge(idx)] = value; }
+        inline void set_value(Vector<uint32_t, Dim> idx, T value) { map_data_.host_data[indexing_.merge(idx)] = value; }
         inline uint32_t merge_idx(const Vector<uint32_t, Dim> &idx) const { return indexing_.merge(idx); }
         inline MapData<T, Dim> get_map_data() const { return map_data_; }
         inline Vector<uint32_t, Dim> get_axis_size() const { return map_data_.axis_sizes; }

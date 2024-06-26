@@ -10,7 +10,7 @@ namespace cuvoxmap
     {
     public:
         MapImpl() = default;
-        MapImpl(const Vector<uint32_t, Dim> &axis_sizes);
+        explicit MapImpl(const Vector<uint32_t, Dim> &axis_sizes);
 
         ~MapImpl() = default;
         inline T *get_host_data() { return array_.get_host_ptr(); }
