@@ -2,7 +2,7 @@
 
 #include "Vector.hpp"
 #include <type_traits>
-
+// #include <iostream>
 namespace cuvoxmap
 {
     template <typename T, uint8_t Dim>
@@ -13,6 +13,12 @@ namespace cuvoxmap
 
     public:
         GlobLocalCvt() = default;
+        GlobLocalCvt(const Vector<T, Dim> &map_origin, T resolution)
+            : map_origin_(map_origin), resolution_(resolution)
+        {
+            update_grid_snap_diff();
+            update_origin_idx();
+        }
         ~GlobLocalCvt() = default;
 
         inline Vector<T, Dim> get_map_origin() const { return map_origin_; }
@@ -20,67 +26,59 @@ namespace cuvoxmap
         {
             map_origin_ = origin;
             update_grid_snap_diff();
+            update_origin_idx();
         }
 
         inline T get_resolution() const { return resolution_; }
         inline void set_resolution(T resolution) { resolution_ = resolution; }
 
-        inline Vector<T, Dim> gpos_2_lpos(const Vector<T, Dim> &gpos) const
-        {
-            return gpos - map_origin_;
-        }
+        inline Vector<T, Dim> gpos_2_lpos(const Vector<T, Dim> &gpos) const { return gpos - map_origin_; }
+        inline Vector<int, Dim> gpos_2_gidx(const Vector<T, Dim> &gpos) const { return Pos2GridIdx(gpos); }
+        inline Vector<int, Dim> gpos_2_lidx(const Vector<T, Dim> &gpos) const { return lpos_2_lidx(gpos_2_lpos(gpos)); }
 
-        inline Vector<T, Dim> lpos_2_gpos(const Vector<T, Dim> &lpos) const
-        {
-            return lpos + map_origin_;
-        }
+        inline Vector<T, Dim> gidx_2_gpos(const Vector<int, Dim> &gidx) const { return GridIdx2Pos(gidx); }
+        inline Vector<T, Dim> gidx_2_lpos(const Vector<int, Dim> &gidx) const { return gpos_2_lpos(gidx_2_gpos(gidx)); }
+        inline Vector<int, Dim> gidx_2_lidx(const Vector<int, Dim> &gidx) const { return gidx - map_origin_idx_; }
 
-        inline Vector<uint32_t, Dim> lpos_2_lidx(const Vector<T, Dim> &lpos) const
-        {
-            return Pos2Idx(lpos + map_origin_grid_snap_diff_);
-        }
+        inline Vector<T, Dim> lpos_2_gpos(const Vector<T, Dim> &lpos) const { return lpos + map_origin_; }
+        inline Vector<int, Dim> lpos_2_gidx(const Vector<T, Dim> &lpos) const { return gpos_2_gidx(lpos_2_gpos(lpos)); }
+        inline Vector<int, Dim> lpos_2_lidx(const Vector<T, Dim> &lpos) const { return Pos2GridIdx(lpos + map_origin_grid_snap_diff_); }
 
-        inline Vector<T, Dim> lidx_2_lpos(const Vector<uint32_t, Dim> &lidx) const
-        {
-            return Idx2Pos(lidx) - map_origin_grid_snap_diff_;
-        }
-
-        inline Vector<uint32_t, Dim> gpos_2_lidx(const Vector<T, Dim> &gpos) const
-        {
-            return lpos_2_lidx(gpos_2_lpos(gpos));
-        }
-
-        inline Vector<T, Dim> lidx_2_gpos(const Vector<uint32_t, Dim> &lidx) const
-        {
-            return lpos_2_gpos(lidx_2_lpos(lidx));
-        }
+        inline Vector<T, Dim> lidx_2_lpos(const Vector<int, Dim> &lidx) const { return GridIdx2Pos(lidx) - map_origin_grid_snap_diff_; }
+        inline Vector<T, Dim> lidx_2_gpos(const Vector<int, Dim> &lidx) const { return lpos_2_gpos(lidx_2_lpos(lidx)); }
+        inline Vector<int, Dim> lidx_2_gidx(const Vector<int, Dim> &lidx) const { return lidx + map_origin_idx_; }
 
     private:
-        void update_grid_snap_diff()
+        inline void update_grid_snap_diff()
         {
-            map_origin_grid_snap_diff_ = map_origin_ - (Pos2Idx(map_origin_) * resolution_);
+            map_origin_grid_snap_diff_ = map_origin_ - (Pos2GridIdx(map_origin_).template cast<T>()) * resolution_;
         }
 
-        Vector<uint32_t, Dim> Pos2Idx(const Vector<T, Dim> &pos) const
+        inline void update_origin_idx()
+        {
+            map_origin_idx_ = Pos2GridIdx(map_origin_);
+        }
+
+        Vector<int, Dim> Pos2GridIdx(const Vector<T, Dim> &pos) const
         {
             if constexpr (Dim == 1)
             {
-                return Vector<uint32_t, 1>{static_cast<uint32_t>(floor(pos[0] / resolution_))};
+                return Vector<int, 1>{static_cast<int>(floor(pos[0] / resolution_))};
             }
             else if constexpr (Dim == 2)
             {
-                return Vector<uint32_t, 2>{static_cast<uint32_t>(floor(pos[0] / resolution_)),
-                                           static_cast<uint32_t>(floor(pos[1] / resolution_))};
+                return Vector<int, 2>{static_cast<int>(floor(pos[0] / resolution_)),
+                                      static_cast<int>(floor(pos[1] / resolution_))};
             }
             else if constexpr (Dim == 3)
             {
-                return Vector<uint32_t, 3>{static_cast<uint32_t>(floor(pos[0] / resolution_)),
-                                           static_cast<uint32_t>(floor(pos[1] / resolution_)),
-                                           static_cast<uint32_t>(floor(pos[2] / resolution_))};
+                return Vector<int, 3>{static_cast<int>(floor(pos[0] / resolution_)),
+                                      static_cast<int>(floor(pos[1] / resolution_)),
+                                      static_cast<int>(floor(pos[2] / resolution_))};
             }
         }
 
-        Vector<T, Dim> Idx2Pos(const Vector<uint32_t, Dim> &idx) const
+        Vector<T, Dim> GridIdx2Pos(const Vector<int, Dim> &idx) const
         {
             if constexpr (Dim == 1)
             {
@@ -88,12 +86,12 @@ namespace cuvoxmap
             }
             else if constexpr (Dim == 2)
             {
-                return Vector<T, 1>{idx[0] * resolution_ + static_cast<T>(0.5) * resolution_,
+                return Vector<T, 2>{idx[0] * resolution_ + static_cast<T>(0.5) * resolution_,
                                     idx[1] * resolution_ + static_cast<T>(0.5) * resolution_};
             }
             else if constexpr (Dim == 3)
             {
-                return Vector<T, 1>{idx[0] * resolution_ + static_cast<T>(0.5) * resolution_,
+                return Vector<T, 3>{idx[0] * resolution_ + static_cast<T>(0.5) * resolution_,
                                     idx[1] * resolution_ + static_cast<T>(0.5) * resolution_,
                                     idx[2] * resolution_ + static_cast<T>(0.5) * resolution_};
             }
@@ -101,6 +99,7 @@ namespace cuvoxmap
 
         Vector<T, Dim> map_origin_;
         Vector<T, Dim> map_origin_grid_snap_diff_;
+        Vector<int, Dim> map_origin_idx_;
         T resolution_;
     };
 }
