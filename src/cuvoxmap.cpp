@@ -9,9 +9,14 @@ namespace cuvoxmap
                                                  st_map_accessor_(st_map_alloc_.get_mapData()),
                                                  dst_map_accessor_(dst_map_alloc_.get_mapData())
     {
-        param_.x_axis_len = init.x_axis_len;
-        param_.y_axis_len = init.y_axis_len;
+        param_.axis_sizes = uIdx2D{init.x_axis_len, init.y_axis_len};
         param_.resolution = init.resolution;
+
+        glc_ = GlobLocalCvt<float, 2>(Float2D::Zeros(),
+                                      param_.resolution,
+                                      param_.axis_sizes);
+
+        idx2d_ = Indexing<2>{param_.axis_sizes};
     }
 
     // void cuvoxmap2D::set_pb_map(const Idx2D &idx, float value)

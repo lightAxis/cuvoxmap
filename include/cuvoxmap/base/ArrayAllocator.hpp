@@ -61,6 +61,16 @@ namespace cuvoxmap
 #endif
                 }
 
+                void fill(T value)
+                {
+#ifdef __CUDACC__
+                        thrust::fill(host_.begin(), host_.end(), value);
+
+#else
+                        std::fill(host_vector_.begin(), host_vector_.end(), value);
+#endif
+                }
+
         private:
 #ifdef __CUDACC__
                 thrust::host_vector<T> host_;

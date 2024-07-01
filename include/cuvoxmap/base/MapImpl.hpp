@@ -20,6 +20,8 @@ namespace cuvoxmap
         void host_to_device();
         void device_to_host();
 
+        void fill(T value) { array_.fill(value); }
+
     private:
         // Some data members
         ArrayAllocator<T> array_;

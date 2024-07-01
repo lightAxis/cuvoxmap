@@ -14,7 +14,7 @@ TEST_CASE("MapAccessorHost cpu")
 
         REQUIRE(accessor.get_value(cuvoxmap::uIdx2D{1, 2}) == 1);
         REQUIRE(accessor.get_value(cuvoxmap::uIdx2D{2, 3}) == 2);
-        REQUIRE(accessor.get_axis_size() == cuvoxmap::uIdx2D{10, 20});
+        REQUIRE(accessor.get_map_data().axis_sizes == cuvoxmap::uIdx2D{10, 20});
         REQUIRE(accessor.merge_idx(cuvoxmap::uIdx2D{1, 2}) == 1 * 1 + 2 * 10);
         REQUIRE(accessor.merge_idx(cuvoxmap::uIdx2D{1, 2}) == 1 * 1 + 2 * 10);
 

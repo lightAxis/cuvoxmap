@@ -38,6 +38,11 @@ namespace cuvoxmap
     {
         impl_->device_to_host();
     }
+    template <typename T, uint8_t Dim>
+    void MapAllocator<T, Dim>::fill(T value)
+    {
+        impl_->fill(value);
+    }
 
     template class MapAllocator<uint8_t, 2>;
     template class MapAllocator<uint8_t, 3>;

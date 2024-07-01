@@ -12,6 +12,12 @@ TEST_CASE("Cuvoxmap_cpu")
 
     using check = cuvoxmap::eCheck;
     using map = cuvoxmap::eMap;
-    cmap.set_map_withGlobIdx<map::PROBABILITY, check::NONE>(cuvoxmap::Idx2D{0, 0}, 0.f);
-    cmap.set_map_withGlobIdx<map::PROBABILITY>(cuvoxmap::Idx2D{0, 0}, 0.f);
+    using frame = cuvoxmap::eFrame;
+
+    SECTION("basic get set")
+    {
+        cmap.get_map_withIdx<map::PROBABILITY, check::NONE, frame::GLOBAL>(cuvoxmap::Idx2D{0, 0});
+        cmap.set_map_withIdx<map::PROBABILITY, check::NONE, frame::GLOBAL>(cuvoxmap::Idx2D{0, 0}, 0.f);
+        cmap.set_map_withIdx<map::PROBABILITY, check::NONE, frame::GLOBAL>(cuvoxmap::Idx2D{0, 0}, 0.f);
+    }
 }
