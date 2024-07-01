@@ -65,7 +65,7 @@ namespace cuvoxmap
             }
         }
 
-        static Vector<T, Dim> Ones()
+        __host__ __device__ static Vector<T, Dim> Ones()
         {
             Vector<T, Dim> result;
             for (uint8_t i = 0; i < Dim; i++)
@@ -75,7 +75,7 @@ namespace cuvoxmap
             return result;
         }
 
-        static Vector<T, Dim> Zeros()
+        __host__ __device__ static Vector<T, Dim> Zeros()
         {
             Vector<T, Dim> result;
             for (uint8_t i = 0; i < Dim; i++)

@@ -1,6 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include <cuvoxmap/base/MapAllocator.hpp>
-#include "custom_matchers/device_testmacros.cuh"
+#include "../custom_matchers/device_testmacros.cuh"
 
 TEST_CASE("MapAllocator gpu")
 {

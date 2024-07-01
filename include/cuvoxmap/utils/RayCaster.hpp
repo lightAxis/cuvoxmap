@@ -15,7 +15,7 @@ namespace cuvoxmap
                       "RayCaster only supports float or double");
 
     public:
-        __host__ __device__ RayCaster() = default;
+        RayCaster() = default;
         __host__ __device__ RayCaster(const Vector<T, Dim> &startPos, const Vector<T, Dim> &endPos, T grid_res)
             : startPos_(startPos), endPos_(endPos), res_(grid_res)
         {
@@ -31,7 +31,7 @@ namespace cuvoxmap
             const uint32_t count = static_cast<uint32_t>(lineLen_ / res_);
             max_count_ = lineLen_ - static_cast<T>(count) * res_ > static_cast<T>(1e-5f) ? count + 2 : count + 1;
         }
-        __host__ __device__ ~RayCaster() = default;
+        ~RayCaster() = default;
 
         __host__ __device__ Vector<T, Dim> get_StartPos() const { return startPos_; }
         __host__ __device__ Vector<T, Dim> get_EndPos() const { return endPos_; }
@@ -78,4 +78,9 @@ namespace cuvoxmap
         uint32_t max_count_;
         uint32_t idx_{0};
     };
+
+    using RayCaster2f = RayCaster<float, 2>;
+    using RayCaster3f = RayCaster<float, 3>;
+    using RayCaster2d = RayCaster<double, 2>;
+    using RayCaster3d = RayCaster<double, 3>;
 }
