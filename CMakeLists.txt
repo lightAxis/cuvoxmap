@@ -16,7 +16,11 @@ project(
 
 ## compile options
 set(CUVOXMAP_USING_CUDA ON)
-set(BUILD_TESTING ON)
+message(STATUS "testing " ${BUILD_TESTING})
+if(NOT DEFINED BUILD_TESTING)
+    message(STATUS "BUILD_TESTING is not defined, set to ON")
+    set(BUILD_TESTING ON)
+endif()
 
 ## enabling cuda
 if(CUVOXMAP_USING_CUDA)
@@ -37,9 +41,7 @@ if(NOT CMAKE_CXX_STANDARD_REQUIRED)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
 
-if(NOT BUILD_TESTING)
-    set(BUILD_TESTING ON)
-endif()
+
 
 include_directories(include)
 
