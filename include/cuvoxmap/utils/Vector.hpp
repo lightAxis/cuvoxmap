@@ -14,6 +14,7 @@
 #include <cstdint>
 #include <initializer_list>
 #include <cmath>
+#include <cassert>
 
 namespace cuvoxmap
 {

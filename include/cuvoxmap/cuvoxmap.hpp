@@ -9,16 +9,16 @@ namespace cuvoxmap
 {
     enum class eVoxel
     {
-        UNKNOWN = 0x0,
-        OCCUPIED = 0x01,
-        FREE = 0x02,
-        UNOBSERVED = 0x04,
+        UNKNOWN = 1 << 0,
+        OCCUPIED = 1 << 1,
+        FREE = 1 << 2,
+        UNOBSERVED = 1 << 3,
     };
 
     enum class eCheck
     {
         NONE = 0x00,
-        OUTSIDE = 0x01,
+        BOUNDARY = 0x01,
     };
 
     enum class eMap
@@ -56,6 +56,31 @@ namespace cuvoxmap
         using Type = float;
     };
 
+    template <eMap mapT, eCheck checkT = eCheck::BOUNDARY, eFrame frameT = eFrame::GLOBAL>
+    struct map_getset_s
+    {
+        constexpr static eMap mapT_v = mapT;
+        constexpr static eCheck checkT_v = checkT;
+        constexpr static eFrame frameT_v = frameT;
+        using map_getset_s_type = std::true_type;
+    };
+
+    namespace getset
+    {
+        using PRB_FAST_GLB = map_getset_s<eMap::PROBABILITY, eCheck::NONE, eFrame::GLOBAL>;
+        using PRB_FAST_LOC = map_getset_s<eMap::PROBABILITY, eCheck::NONE, eFrame::LOCAL>;
+        using PRB_CHK_GLB = map_getset_s<eMap::PROBABILITY, eCheck::BOUNDARY, eFrame::GLOBAL>;
+        using PRB_CHK_LOC = map_getset_s<eMap::PROBABILITY, eCheck::BOUNDARY, eFrame::LOCAL>;
+        using ST_FAST_GLB = map_getset_s<eMap::STATE, eCheck::NONE, eFrame::GLOBAL>;
+        using ST_FAST_LOC = map_getset_s<eMap::STATE, eCheck::NONE, eFrame::LOCAL>;
+        using ST_CHK_GLB = map_getset_s<eMap::STATE, eCheck::BOUNDARY, eFrame::GLOBAL>;
+        using ST_CHK_LOC = map_getset_s<eMap::STATE, eCheck::BOUNDARY, eFrame::LOCAL>;
+        using DST_FAST_GLB = map_getset_s<eMap::DISTANCE, eCheck::NONE, eFrame::GLOBAL>;
+        using DST_FAST_LOC = map_getset_s<eMap::DISTANCE, eCheck::NONE, eFrame::LOCAL>;
+        using DST_CHK_GLB = map_getset_s<eMap::DISTANCE, eCheck::BOUNDARY, eFrame::GLOBAL>;
+        using DST_CHK_LOC = map_getset_s<eMap::DISTANCE, eCheck::BOUNDARY, eFrame::LOCAL>;
+    }
+
     class cuvoxmap2D
     {
     public:
@@ -77,77 +102,75 @@ namespace cuvoxmap
         ~cuvoxmap2D() = default;
 
     public:
-        template <eMap mapT, eCheck checkT = eCheck::OUTSIDE, eFrame frameT = eFrame::GLOBAL>
-        void set_map_withIdx(const Idx2D &idx, typename MapType<mapT>::Type value)
+        template <typename map_getsetT>
+        void set_map_withIdx(const Idx2D &idx, typename MapType<map_getsetT::mapT_v>::Type value)
         {
-            // static_assert((mapT == eMap::PROBABILITY && std::is_same_v<T, float>) ||
-            //                   (mapT == eMap::STATE && std::is_same_v<T, uint8_t>) ||
-            //                   (mapT == eMap::DISTANCE && std::is_same_v<T, float>),
-            //               "Invalid type for map set operation");
+            static_assert(map_getsetT::map_getset_s_type::value, "Invalid type for map set operation. use map_getset_s type to set map value");
 
             Idx2D lidx;
-            if constexpr (frameT == eFrame::GLOBAL)
+            if constexpr (map_getsetT::frameT_v == eFrame::GLOBAL)
             {
                 lidx = glc_.gidx_2_lidx(idx);
             }
-            else if constexpr (frameT == eFrame::LOCAL)
+            else if constexpr (map_getsetT::frameT_v == eFrame::LOCAL)
             {
                 lidx = idx;
             }
 
-            if constexpr (checkT == eCheck::OUTSIDE)
+            if constexpr (map_getsetT::checkT_v == eCheck::BOUNDARY)
             {
                 if (!glc_.lidx_available(lidx))
                     return;
             }
 
-            if constexpr (mapT == eMap::PROBABILITY)
+            assert(lidx[0] >= 0 && lidx[1] >= 0); // local index should be positive
+
+            if constexpr (map_getsetT::mapT_v == eMap::PROBABILITY)
             {
                 pb_map_accessor_.set_value(lidx.cast<uint32_t>(), value);
             }
-            else if constexpr (mapT == eMap::STATE)
+            else if constexpr (map_getsetT::mapT_v == eMap::STATE)
             {
                 st_map_accessor_.set_value(lidx.cast<uint32_t>(), value);
             }
-            else if constexpr (mapT == eMap::DISTANCE)
+            else if constexpr (map_getsetT::mapT_v == eMap::DISTANCE)
             {
                 dst_map_accessor_.set_value(lidx.cast<uint32_t>(), value);
             }
         }
 
-        template <eMap mapT, eCheck checkT = eCheck::OUTSIDE, eFrame frameT = eFrame::GLOBAL>
-        typename MapType<mapT>::Type get_map_withIdx(const Idx2D &idx)
+        template <typename map_getsetT>
+        typename MapType<map_getsetT::mapT_v>::Type get_map_withIdx(const Idx2D &idx)
         {
-            // static_assert((mapT == eMap::PROBABILITY && std::is_same_v<T, float>) ||
-            //                   (mapT == eMap::STATE && std::is_same_v<T, uint8_t>) ||
-            //                   (mapT == eMap::DISTANCE && std::is_same_v<T, float>),
-            //               "Invalid type for map get operation");
+            static_assert(map_getsetT::map_getset_s_type::value, "Invalid type for map set operation. use map_getset_s type to get map value");
 
             Idx2D lidx;
-            if constexpr (frameT == eFrame::GLOBAL)
+            if constexpr (map_getsetT::frameT_v == eFrame::GLOBAL)
             {
                 lidx = glc_.gidx_2_lidx(idx);
             }
-            else if constexpr (frameT == eFrame::LOCAL)
+            else if constexpr (map_getsetT::frameT_v == eFrame::LOCAL)
             {
                 lidx = idx;
             }
 
-            if constexpr (checkT == eCheck::OUTSIDE)
+            if constexpr (map_getsetT::checkT_v == eCheck::BOUNDARY)
             {
                 if (!glc_.lidx_available(lidx))
-                    return;
+                    return typename MapType<map_getsetT::mapT_v>::Type{};
             }
 
-            if constexpr (mapT == eMap::PROBABILITY)
+            assert(lidx[0] >= 0 && lidx[1] >= 0); // local index should be positive
+
+            if constexpr (map_getsetT::mapT_v == eMap::PROBABILITY)
             {
                 return pb_map_accessor_.get_value(lidx.cast<uint32_t>());
             }
-            else if constexpr (mapT == eMap::STATE)
+            else if constexpr (map_getsetT::mapT_v == eMap::STATE)
             {
                 return st_map_accessor_.get_value(lidx.cast<uint32_t>());
             }
-            else if constexpr (mapT == eMap::DISTANCE)
+            else if constexpr (map_getsetT::mapT_v == eMap::DISTANCE)
             {
                 return dst_map_accessor_.get_value(lidx.cast<uint32_t>());
             }
@@ -169,15 +192,14 @@ namespace cuvoxmap
                 dst_map_alloc_.fill(value);
             }
         }
-        // float get_pb_map(const Idx2D &Idx) const;
-        // eVoxel get_st_map(const Idx2D &Idx) const;
-        // float get_dst_map(const Idx2D &Idx) const;
+
+        inline void set_origin(const Vector<float, 2> &originPos) { glc_.set_map_origin(originPos); }
+        inline GlobLocalCvt<float, 2> &get_glob_loc_cvt() { return glc_; }
 
         // TODO
         // probability log odd probability
         // probability raycasing
         // probability state map
-        // state map get set
         // state map check various collision
         // distance map update
     private:
