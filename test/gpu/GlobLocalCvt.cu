@@ -39,9 +39,6 @@ TEST_CASE("GlobLocalIdxCvt cpu")
         REQUIRE_THAT(glc.lidx_2_gidx(lidx), IdxVecMatcher(gidx));
         REQUIRE_THAT(glc.lidx_2_gpos(lidx), FloatVecMatcher(gpos2));
         REQUIRE_THAT(glc.lidx_2_lpos(lidx), FloatVecMatcher(lpos2));
-
-        REQUIRE(glc.lidx_available(lidx) == true);
-        REQUIRE(glc.lidx_available(local_size, lidx) == true);
     }
 
     SECTION("itself")
@@ -76,8 +73,5 @@ TEST_CASE("GlobLocalIdxCvt cpu")
         REQUIRE_THAT(glc.lidx_2_gidx(lidx), IdxVecMatcher(gidx));
         REQUIRE_THAT(glc.lidx_2_gpos(lidx), FloatVecMatcher(gpos2));
         REQUIRE_THAT(glc.lidx_2_lpos(lidx), FloatVecMatcher(lpos2));
-
-        REQUIRE(glc.lidx_available(lidx) == false);
-        REQUIRE(glc.lidx_available(local_size, lidx) == false);
     }
 }

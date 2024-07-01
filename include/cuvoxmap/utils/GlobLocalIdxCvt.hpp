@@ -13,8 +13,8 @@ namespace cuvoxmap
 
     public:
         GlobLocalCvt() = default;
-        GlobLocalCvt(const Vector<T, Dim> &map_origin, T resolution)
-            : map_origin_(map_origin), resolution_(resolution)
+        GlobLocalCvt(const Vector<T, Dim> &map_origin, T resolution, const Vector<uint32_t, Dim> &local_size)
+            : map_origin_(map_origin), resolution_(resolution), local_size_(local_size)
         {
             update_grid_snap_diff();
             update_origin_idx();
@@ -32,6 +32,9 @@ namespace cuvoxmap
         inline T get_resolution() const { return resolution_; }
         inline void set_resolution(T resolution) { resolution_ = resolution; }
 
+        inline Vector<uint32_t, Dim> get_local_size() const { return local_size_; }
+        inline void set_local_size(const Vector<uint32_t, Dim> &local_size) { local_size_ = local_size; }
+
         inline Vector<T, Dim> gpos_2_lpos(const Vector<T, Dim> &gpos) const { return gpos - map_origin_; }
         inline Vector<int, Dim> gpos_2_gidx(const Vector<T, Dim> &gpos) const { return Pos2GridIdx(gpos); }
         inline Vector<int, Dim> gpos_2_lidx(const Vector<T, Dim> &gpos) const { return lpos_2_lidx(gpos_2_lpos(gpos)); }
@@ -47,6 +50,31 @@ namespace cuvoxmap
         inline Vector<T, Dim> lidx_2_lpos(const Vector<int, Dim> &lidx) const { return GridIdx2Pos(lidx) - map_origin_grid_snap_diff_; }
         inline Vector<T, Dim> lidx_2_gpos(const Vector<int, Dim> &lidx) const { return lpos_2_gpos(lidx_2_lpos(lidx)); }
         inline Vector<int, Dim> lidx_2_gidx(const Vector<int, Dim> &lidx) const { return lidx + map_origin_idx_; }
+
+        inline static bool lidx_available(const Vector<uint32_t, Dim> &axises, const Vector<int, Dim> &lidx)
+        {
+            if constexpr (Dim == 1)
+            {
+                return lidx[0] >= 0 && axises[0] > lidx[0];
+            }
+            else if constexpr (Dim == 2)
+            {
+                return lidx[0] >= 0 && axises[0] > lidx[0] &&
+                       lidx[1] >= 0 && axises[1] > lidx[1];
+            }
+            else if constexpr (Dim == 3)
+            {
+                return lidx[0] >= 0 && axises[0] > lidx[0] &&
+                       lidx[1] >= 0 && axises[1] > lidx[1] &&
+                       lidx[2] >= 0 && axises[2] > lidx[2];
+            }
+            return false;
+        }
+
+        inline bool lidx_available(const Vector<int, Dim> &lidx) const
+        {
+            return lidx_available(local_size_, lidx);
+        }
 
     private:
         inline void update_grid_snap_diff()
@@ -101,5 +129,6 @@ namespace cuvoxmap
         Vector<T, Dim> map_origin_grid_snap_diff_;
         Vector<int, Dim> map_origin_idx_;
         T resolution_;
+        Vector<uint32_t, Dim> local_size_;
     };
 }
