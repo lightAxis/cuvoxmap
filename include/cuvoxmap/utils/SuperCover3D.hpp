@@ -32,9 +32,9 @@ namespace cuvoxmap
         bool hasMore{true};
 
     public:
-        __host__ __device__ SuperCoverLine3D() = default;
-        __host__ __device__ ~SuperCoverLine3D() = default;
-        __host__ __device__ SuperCoverLine3d(const Pos3 &startPos, const Pos3 &endPos, PosT resolution)
+        SuperCoverLine3D() = default;
+        ~SuperCoverLine3D() = default;
+        __host__ __device__ SuperCoverLine3D(const Pos3 &startPos, const Pos3 &endPos, PosT resolution)
         {
             Pos3 delta = endPos - startPos;
 
@@ -60,9 +60,9 @@ namespace cuvoxmap
             tMaxOffset = Pos3({delta[0] != 0 ? (step[0] > 0 ? (resolution - offset[0]) / delta[0] : offset[0] / -delta[0]) : static_cast<PosT>(1e+20f),
                                delta[1] != 0 ? (step[1] > 0 ? (resolution - offset[1]) / delta[1] : offset[1] / -delta[1]) : static_cast<PosT>(1e+20f),
                                delta[2] != 0 ? (step[2] > 0 ? (resolution - offset[2]) / delta[2] : offset[2] / -delta[2]) : static_cast<PosT>(1e+20f)});
-            tDeleta = Pos3({delta[0] != 0 ? resolution / fabs(delta[0]) : static_cast<PosT>(1e+20f),
-                            delta[1] != 0 ? resolution / fabs(delta[1]) : static_cast<PosT>(1e+20f),
-                            delta[2] != 0 ? resolution / fabs(delta[2]) : static_cast<T>(1e+20f)});
+            tDeleta = Pos3({delta[0] != 0 ? resolution / std::abs(delta[0]) : static_cast<PosT>(1e+20f),
+                            delta[1] != 0 ? resolution / std::abs(delta[1]) : static_cast<PosT>(1e+20f),
+                            delta[2] != 0 ? resolution / std::abs(delta[2]) : static_cast<PosT>(1e+20f)});
 
             tMaxMulCount = Idx3::Zeros();
         }
