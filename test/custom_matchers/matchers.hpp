@@ -25,6 +25,28 @@ public:
     }
 };
 
+template <typename T>
+class IdxVecMatcher : public Catch::Matchers::MatcherBase<T>
+{
+    T val_;
+    static_assert(std::is_same_v<T, cuvoxmap::Idx2D> ||
+                      std::is_same_v<T, cuvoxmap::Idx3D>,
+                  "IdxVecMatcher only supports Idx2D or Idx3D");
+
+public:
+    IdxVecMatcher(const T &val) : val_(val) {}
+
+    bool match(T const &in) const override
+    {
+        return close_enough(in, val_);
+    }
+
+    std::string describe() const override
+    {
+        return toString<T>(val_);
+    }
+};
+
 // Specialize StringMaker for cuvoxmap::Float2D
 namespace Catch
 {
@@ -45,4 +67,41 @@ namespace Catch
             return toString(value);
         }
     };
+
+    template <>
+    struct StringMaker<cuvoxmap::Double2D>
+    {
+        static std::string convert(cuvoxmap::Double2D const &value)
+        {
+            return toString(value);
+        }
+    };
+
+    template <>
+    struct StringMaker<cuvoxmap::Double3D>
+    {
+        static std::string convert(cuvoxmap::Double3D const &value)
+        {
+            return toString(value);
+        }
+    };
+
+    template <>
+    struct StringMaker<cuvoxmap::Idx2D>
+    {
+        static std::string convert(cuvoxmap::Idx2D const &value)
+        {
+            return toString(value);
+        }
+    };
+
+    template <>
+    struct StringMaker<cuvoxmap::Idx3D>
+    {
+        static std::string convert(cuvoxmap::Idx3D const &value)
+        {
+            return toString(value);
+        }
+    };
+
 }
