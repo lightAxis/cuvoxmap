@@ -17,27 +17,28 @@ namespace cuvoxmap
                                       param_.axis_sizes);
 
         idx2d_ = Indexing<2>{param_.axis_sizes};
+        box_ = Box<float, 2>{Float2D::Zeros(), Float2D{param_.axis_sizes[0] * param_.resolution, param_.axis_sizes[1] * param_.resolution}};
+
+        // void cuvoxmap2D::set_pb_map(const Idx2D &idx, float value)
+        // {
+        //     pb_map_accessor_.set_value(idx.cast<uint32_t>(), value);
+        // }
+
+        // void cuvoxmap2D::set_st_map(const Idx2D &idx, VoxelType value)
+        // {
+        // }
+        // void cuvoxmap2D::set_dst_map(const Idx2D &idx, float value)
+        // {
+        // }
+
+        // float cuvoxmap2D::get_pb_map(const Idx2D &Idx) const
+        // {
+        // }
+        // cuvoxmap2D::VoxelType cuvoxmap2D::get_st_map(const Idx2D &Idx) const
+        // {
+        // }
+        // float cuvoxmap2D::get_dst_map(const Idx2D &Idx) const
+        // {
+        // }
     }
-
-    // void cuvoxmap2D::set_pb_map(const Idx2D &idx, float value)
-    // {
-    //     pb_map_accessor_.set_value(idx.cast<uint32_t>(), value);
-    // }
-
-    // void cuvoxmap2D::set_st_map(const Idx2D &idx, VoxelType value)
-    // {
-    // }
-    // void cuvoxmap2D::set_dst_map(const Idx2D &idx, float value)
-    // {
-    // }
-
-    // float cuvoxmap2D::get_pb_map(const Idx2D &Idx) const
-    // {
-    // }
-    // cuvoxmap2D::VoxelType cuvoxmap2D::get_st_map(const Idx2D &Idx) const
-    // {
-    // }
-    // float cuvoxmap2D::get_dst_map(const Idx2D &Idx) const
-    // {
-    // }
 }

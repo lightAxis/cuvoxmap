@@ -4,6 +4,9 @@
 #include "base/MapAccessorHost.hpp"
 
 #include "utils/GlobLocalIdxCvt.hpp"
+#include "utils/Box.hpp"
+#include "utils/RayCaster.hpp"
+#include "utils/SuperCover2D.hpp"
 
 namespace cuvoxmap
 {
@@ -79,6 +82,33 @@ namespace cuvoxmap
         using DST_FAST_LOC = map_getset_s<eMap::DISTANCE, eCheck::NONE, eFrame::LOCAL>;
         using DST_CHK_GLB = map_getset_s<eMap::DISTANCE, eCheck::BOUNDARY, eFrame::GLOBAL>;
         using DST_CHK_LOC = map_getset_s<eMap::DISTANCE, eCheck::BOUNDARY, eFrame::LOCAL>;
+    }
+
+    enum class eLine
+    {
+        RAYCAST = 0x01,
+        SUPERCOVER = 0x02,
+    };
+
+    template <eCheck checkT, eFrame frameT, eLine lineT>
+    struct line_check_s
+    {
+        constexpr static eCheck checkT_v = checkT;
+        constexpr static eFrame frameT_v = frameT;
+        constexpr static eLine lineT_v = lineT;
+        using line_check_s_type = std::true_type;
+    };
+
+    namespace linecheck
+    {
+        using NON_GLB_RAY = line_check_s<eCheck::NONE, eFrame::GLOBAL, eLine::RAYCAST>;
+        using NON_GLB_SUP = line_check_s<eCheck::NONE, eFrame::GLOBAL, eLine::SUPERCOVER>;
+        using NON_LOC_RAY = line_check_s<eCheck::NONE, eFrame::LOCAL, eLine::RAYCAST>;
+        using NON_LOC_SUP = line_check_s<eCheck::NONE, eFrame::LOCAL, eLine::SUPERCOVER>;
+        using CHK_GLB_RAY = line_check_s<eCheck::BOUNDARY, eFrame::GLOBAL, eLine::RAYCAST>;
+        using CHK_GLB_SUP = line_check_s<eCheck::BOUNDARY, eFrame::GLOBAL, eLine::SUPERCOVER>;
+        using CHK_LOC_RAY = line_check_s<eCheck::BOUNDARY, eFrame::LOCAL, eLine::RAYCAST>;
+        using CHK_LOC_SUP = line_check_s<eCheck::BOUNDARY, eFrame::LOCAL, eLine::SUPERCOVER>;
     }
 
     class cuvoxmap2D
@@ -196,6 +226,77 @@ namespace cuvoxmap
         inline void set_origin(const Vector<float, 2> &originPos) { glc_.set_map_origin(originPos); }
         inline GlobLocalCvt<float, 2> &get_glob_loc_cvt() { return glc_; }
 
+        // raycast or supercover
+        // fast of check boundary
+        // check what map
+        // check what frame
+
+        // constexpr static eCheck checkT_v = checkT;
+        // constexpr static eFrame frameT_v = frameT;
+        // constexpr static eLine lineT_v = lineT;
+        // using line_check_s_type = std::true_type;
+
+        template <typename line_checkT>
+        inline bool check_line_state_map(const Vector<float, 2> &start, const Vector<float, 2> &end, uint8_t voxelBitflags)
+        {
+            static_assert(line_checkT::line_check_s_type::value, "Invalid type for line check operation. use line_check_s type to check line");
+
+            Vector<float, 2> start_l = start;
+            Vector<float, 2> end_l = end;
+
+            if constexpr (line_checkT::frameT_v == eFrame::GLOBAL)
+            {
+                start_l = glc_.gpos_2_lpos(start);
+                end_l = glc_.gpos_2_lpos(end);
+            }
+
+            if constexpr (line_checkT::checkT_v == eCheck::BOUNDARY)
+            {
+                Vector<float, 2> p1_out;
+                Vector<float, 2> p2_out;
+                if (box_.cutLine(start_l, end_l, p1_out, p2_out))
+                {
+                    start_l = p1_out;
+                    end_l = p2_out;
+                }
+                else
+                {
+                    if (voxelBitflags & static_cast<uint8_t>(eVoxel::UNKNOWN) ||
+                        voxelBitflags & static_cast<uint8_t>(eVoxel::UNOBSERVED))
+                        return true;
+
+                    return false;
+                }
+            }
+
+            if constexpr (line_checkT::lineT_v == eLine::RAYCAST)
+            {
+                RayCaster<float, 2> ray{start_l, end_l, param_.resolution};
+                Float2D pt;
+                while (ray.get_next_pt(pt))
+                {
+                    MapType<eMap::STATE>::Type value = get_map_withIdx<getset::ST_FAST_LOC>(glc_.lpos_2_lidx(pt));
+                    if (value & voxelBitflags)
+                        return true;
+                }
+                return false;
+            }
+            else if constexpr (line_checkT::lineT_v == eLine::SUPERCOVER)
+            {
+                SuperCoverLine2D<float, int32_t> line{start_l, end_l, param_.resolution};
+                Idx2D lidx;
+                while (line.get_next_idx(lidx))
+                {
+                    MapType<eMap::STATE>::Type value = get_map_withIdx<getset::ST_FAST_LOC>(lidx);
+                    if (value & voxelBitflags)
+                        return true;
+                }
+                return false;
+            }
+
+            return false;
+        }
+
         // TODO
         // probability log odd probability
         // probability raycasing
@@ -214,7 +315,8 @@ namespace cuvoxmap
         MapAccesssorHost<MapType<eMap::DISTANCE>::Type, 2> dst_map_accessor_;
 
         param_s param_;
-        GlobLocalCvt<float, 2> glc_;
+        GlobLocalCvt<MapType<eMap::PROBABILITY>::Type, 2> glc_;
         Indexing<2> idx2d_;
+        Box<MapType<eMap::PROBABILITY>::Type, 2> box_;
     };
 }

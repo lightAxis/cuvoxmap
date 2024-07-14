@@ -33,7 +33,7 @@ namespace cuvoxmap
 
     public:
         __host__ __device__ SuperCoverLine2D() = default;
-        __host__ __device__ SuperCoverLine3d(const Pos2 &startPos, const Pos2 &endPos, PosT resolution)
+        __host__ __device__ SuperCoverLine2D(const Pos2 &startPos, const Pos2 &endPos, PosT resolution)
         {
             Pos2 delta = endPos - startPos;
 
