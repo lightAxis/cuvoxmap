@@ -14,10 +14,10 @@ __global__ void test_kernel2(float *ptr)
 TEST_CASE("ArrayAllocator gpu")
 {
     cuvoxmap::ArrayAllocator<int> alloc{};
-    alloc.resize(100);
+    alloc.resize(100, cuvoxmap::eArrayAllocatorType::HOST_AND_DEVICE);
 
     cuvoxmap::ArrayAllocator<float> alloc2{};
-    alloc2.resize(100);
+    alloc2.resize(100, cuvoxmap::eArrayAllocatorType::HOST_AND_DEVICE);
 
     SECTION("test int basic")
     {

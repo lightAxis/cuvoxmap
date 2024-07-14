@@ -48,12 +48,15 @@ include_directories(include)
 if(CUVOXMAP_USING_CUDA)
     add_library(cuvoxmap_gpu 
         src/base/MapAllocator.cu 
-        src/base/MapImpl.cu)
+        src/base/MapImpl.cu
+        src/cuvoxmap.cpp
+        src/distance_transform.cu)
 endif()
 add_library(cuvoxmap_cpu 
     src/base/MapAllocator.cpp 
     src/base/MapImpl.cpp
-    src/cuvoxmap.cpp)
+    src/cuvoxmap.cpp
+    src/distance_transform.cpp)
 # if(CUVOXMAP_USING_CUDA)
 #     target_compile_definitions(cuvoxmap PUBLIC CUVOXMAP_USING_CUDA)
 # endif()

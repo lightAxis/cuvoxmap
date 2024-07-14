@@ -207,34 +207,27 @@ namespace cuvoxmap
         }
 
         template <eMap mapT>
-        void fill(const typename MapType<mapT>::Type &value)
+        void fill_all(const typename MapType<mapT>::Type &value)
         {
             if constexpr (mapT == eMap::PROBABILITY)
             {
-                pb_map_alloc_.fill(value);
+                pb_map_alloc_.fill_host(value);
+                pb_map_alloc_.fill_device(value);
             }
             else if constexpr (mapT == eMap::STATE)
             {
-                st_map_alloc_.fill(value);
+                st_map_alloc_.fill_host(value);
+                st_map_alloc_.fill_device(value);
             }
             else if constexpr (mapT == eMap::DISTANCE)
             {
-                dst_map_alloc_.fill(value);
+                dst_map_alloc_.fill_host(value);
+                dst_map_alloc_.fill_device(value);
             }
         }
 
         inline void set_origin(const Vector<float, 2> &originPos) { glc_.set_map_origin(originPos); }
         inline GlobLocalCvt<float, 2> &get_glob_loc_cvt() { return glc_; }
-
-        // raycast or supercover
-        // fast of check boundary
-        // check what map
-        // check what frame
-
-        // constexpr static eCheck checkT_v = checkT;
-        // constexpr static eFrame frameT_v = frameT;
-        // constexpr static eLine lineT_v = lineT;
-        // using line_check_s_type = std::true_type;
 
         template <typename line_checkT>
         inline bool check_line_state_map(const Vector<float, 2> &start, const Vector<float, 2> &end, uint8_t voxelBitflags)
@@ -298,11 +291,50 @@ namespace cuvoxmap
         }
 
         // TODO
+        void distance_map_update();
+
+        // TODO
         // probability log odd probability
         // probability raycasing
-        // probability state map
-        // state map check various collision
-        // distance map update
+        // probability state map update
+
+        /**
+         * memcpy
+         */
+        template <eMap mapT>
+        void host_to_device()
+        {
+            if constexpr (mapT == eMap::PROBABILITY)
+            {
+                pb_map_alloc_.host_to_device();
+            }
+            else if constexpr (mapT == eMap::STATE)
+            {
+                st_map_alloc_.host_to_device();
+            }
+            else if constexpr (mapT == eMap::DISTANCE)
+            {
+                dst_map_alloc_.host_to_device();
+            }
+        }
+
+        template <eMap mapT>
+        void device_to_host()
+        {
+            if constexpr (mapT == eMap::PROBABILITY)
+            {
+                pb_map_alloc_.device_to_host();
+            }
+            else if constexpr (mapT == eMap::STATE)
+            {
+                st_map_alloc_.device_to_host();
+            }
+            else if constexpr (mapT == eMap::DISTANCE)
+            {
+                dst_map_alloc_.device_to_host();
+            }
+        }
+
     private:
         // allocate memory for the maps
         MapAllocator<MapType<eMap::PROBABILITY>::Type, 2> pb_map_alloc_; // probability map

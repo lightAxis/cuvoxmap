@@ -41,9 +41,16 @@ namespace cuvoxmap
         throw std::runtime_error("Need to build with CUDA support");
     }
     template <typename T, uint8_t Dim>
-    void MapAllocator<T, Dim>::fill(T value)
+    void MapAllocator<T, Dim>::fill_host(T value)
     {
-        impl_->fill(value);
+        impl_->fill_host(value);
+    }
+
+    template <typename T, uint8_t Dim>
+    void MapAllocator<T, Dim>::fill_device(T value)
+    {
+
+        // throw std::runtime_error("Need to build with CUDA support");
     }
 
     template class MapAllocator<uint8_t, 2>;

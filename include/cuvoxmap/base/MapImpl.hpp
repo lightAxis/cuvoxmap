@@ -20,7 +20,8 @@ namespace cuvoxmap
         void host_to_device();
         void device_to_host();
 
-        void fill(T value) { array_.fill(value); }
+        void fill_host(T value) { array_.fill_host(value); }
+        void fill_device(T value) { array_.fill_device(value); }
 
     private:
         // Some data members

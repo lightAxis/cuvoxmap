@@ -51,9 +51,9 @@ TEST_CASE("Cuvoxmap_cpu")
 
     SECTION("fill test")
     {
-        cmap.fill<map::DISTANCE>(30.f);
-        cmap.fill<map::PROBABILITY>(0.5f);
-        cmap.fill<map::STATE>(static_cast<uint8_t>(eVoxel::UNOBSERVED));
+        cmap.fill_all<map::DISTANCE>(30.f);
+        cmap.fill_all<map::PROBABILITY>(0.5f);
+        cmap.fill_all<map::STATE>(static_cast<uint8_t>(eVoxel::UNOBSERVED));
 
         REQUIRE(cmap.get_map_withIdx<getset::DST_FAST_LOC>(Idx2D{0, 0}) == 30.f);
         REQUIRE(cmap.get_map_withIdx<getset::PRB_FAST_LOC>(Idx2D{0, 0}) == 0.5f);
@@ -62,7 +62,7 @@ TEST_CASE("Cuvoxmap_cpu")
 
     SECTION("line check test")
     {
-        cmap.fill<map::STATE>(static_cast<uint8_t>(eVoxel::UNKNOWN));
+        cmap.fill_all<map::STATE>(static_cast<uint8_t>(eVoxel::UNKNOWN));
         cmap.set_map_withIdx<getset::ST_FAST_LOC>(Idx2D{2, 3}, static_cast<uint8_t>(eVoxel::OCCUPIED));
         cmap.set_map_withIdx<getset::ST_FAST_LOC>(Idx2D{3, 4}, static_cast<uint8_t>(eVoxel::FREE));
         cmap.set_map_withIdx<getset::ST_FAST_LOC>(Idx2D{4, 5}, static_cast<uint8_t>(eVoxel::UNOBSERVED));
