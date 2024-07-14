@@ -8,7 +8,7 @@
             "name": "test",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/test/Cuvoxmap_cpu",
+            "program": "${workspaceFolder}/build/test/Box_cpu",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",

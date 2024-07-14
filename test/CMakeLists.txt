@@ -31,6 +31,7 @@ add_test_executable(MapAccessorHost_cpu     SRCS cpu/MapAccessorHost.cpp    LIBS
 add_test_executable(RayCaster_cpu           SRCS cpu/RayCaster.cpp          LIBS cuvoxmap_cpu)
 add_test_executable(SuperCover3D_cpu        SRCS cpu/SuperCover3D.cpp       LIBS cuvoxmap_cpu)
 add_test_executable(GlobLocalCvt_cpu        SRCS cpu/GlobLocalCvt.cpp       LIBS cuvoxmap_cpu)
+add_test_executable(Box_cpu                 SRCS cpu/Box.cpp                LIBS cuvoxmap_cpu)
 
 add_test_executable(Cuvoxmap_cpu            SRCS cpu/Cuvoxmap.cpp           LIBS cuvoxmap_cpu)
 
@@ -44,6 +45,7 @@ add_test_executable(MapAccessorDevice_gpu   SRCS gpu/MapAccessorDevice.cu   LIBS
 add_test_executable(RayCaster_gpu           SRCS gpu/RayCaster.cu           LIBS cuvoxmap_gpu)
 add_test_executable(SuperCover3D_gpu        SRCS gpu/SuperCover3D.cu        LIBS cuvoxmap_gpu)
 add_test_executable(GlobLocalCvt_gpu        SRCS gpu/GlobLocalCvt.cu        LIBS cuvoxmap_gpu)
+add_test_executable(Box_gpu                 SRCS gpu/Box.cu                 LIBS cuvoxmap_gpu)
 
 
 
