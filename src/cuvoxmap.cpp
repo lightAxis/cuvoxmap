@@ -2,9 +2,9 @@
 
 namespace cuvoxmap
 {
-    cuvoxmap2D::cuvoxmap2D(const init_s &init) : pb_map_alloc_(uIdx2D{init.x_axis_len, init.y_axis_len}),
-                                                 st_map_alloc_(uIdx2D{init.x_axis_len, init.y_axis_len}),
-                                                 dst_map_alloc_(uIdx2D{init.x_axis_len, init.y_axis_len}),
+    cuvoxmap2D::cuvoxmap2D(const init_s &init) : pb_map_alloc_(uIdx2D{init.x_axis_len, init.y_axis_len}, eMemAllocType::HOST),
+                                                 st_map_alloc_(uIdx2D{init.x_axis_len, init.y_axis_len}, eMemAllocType::HOST),
+                                                 dst_map_alloc_(uIdx2D{init.x_axis_len, init.y_axis_len}, eMemAllocType::HOST),
                                                  pb_map_accessor_(pb_map_alloc_.get_mapData()),
                                                  st_map_accessor_(st_map_alloc_.get_mapData()),
                                                  dst_map_accessor_(dst_map_alloc_.get_mapData())

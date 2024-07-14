@@ -2,6 +2,7 @@
 
 #include "../utils/ArrayIndexing.hpp"
 #include "MapData.hpp"
+#include "MemAllocType.hpp"
 
 namespace cuvoxmap
 {
@@ -13,7 +14,7 @@ namespace cuvoxmap
     {
     public:
         MapAllocator() = default;
-        MapAllocator(const Vector<uint32_t, Dim> &axis_sizes);
+        MapAllocator(const Vector<uint32_t, Dim> &axis_sizes, eMemAllocType alloc_type);
         ~MapAllocator();
 
         MapData<T, Dim> get_mapData();

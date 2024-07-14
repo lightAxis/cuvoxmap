@@ -35,7 +35,7 @@ __global__ void cpu_basic_kernel(cuvoxmap::MapAccesssorDevice<float, 2> map)
 
 TEST_CASE("MapAccessorDevice gpu")
 {
-    cuvoxmap::MapAllocator<float, 2> alloc{cuvoxmap::uIdx2D{10, 20}};
+    cuvoxmap::MapAllocator<float, 2> alloc{cuvoxmap::uIdx2D{10, 20}, cuvoxmap::eMemAllocType::HOST_AND_DEVICE};
     cuvoxmap::MapAccesssorDevice<float, 2> accessor{alloc.get_mapData()};
 
     SECTION("cpu basic")

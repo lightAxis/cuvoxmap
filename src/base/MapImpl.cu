@@ -4,9 +4,10 @@ namespace cuvoxmap
 {
 
     template <typename T, uint8_t Dim>
-    MapImpl<T, Dim>::MapImpl(const Vector<uint32_t, Dim> &axis_sizes) : axis_sizes_(axis_sizes)
+    MapImpl<T, Dim>::MapImpl(const Vector<uint32_t, Dim> &axis_sizes, eMemAllocType alloc_type)
+        : axis_sizes_(axis_sizes), alloc_type_(alloc_type)
     {
-        array_.resize(axis_sizes_.mul_sum(), eArrayAllocatorType::HOST_AND_DEVICE);
+        array_.resize(axis_sizes_.mul_sum(), alloc_type_);
     }
 
     template <typename T, uint8_t Dim>

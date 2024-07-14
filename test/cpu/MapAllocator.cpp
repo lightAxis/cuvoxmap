@@ -4,7 +4,7 @@
 TEST_CASE("MapAllocator cpu")
 {
     cuvoxmap::uIdx3D dims{5, 6, 7};
-    cuvoxmap::MapAllocator<float, 3> mapAlloc{dims};
+    cuvoxmap::MapAllocator<float, 3> mapAlloc{dims, cuvoxmap::eMemAllocType::HOST};
 
     SECTION("basics")
     {

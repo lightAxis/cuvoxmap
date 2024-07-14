@@ -6,6 +6,8 @@
 #include <cstdint>
 #include <stdexcept>
 
+#include "MemAllocType.hpp"
+
 #ifdef __CUDACC__
 #include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
@@ -13,36 +15,29 @@
 
 namespace cuvoxmap
 {
-        enum class eArrayAllocatorType
-        {
-                HOST = 1 << 0,
-                DEVICE = 1 << 1,
-                HOST_AND_DEVICE = HOST | DEVICE,
-                NONE = 0,
-        };
 
         template <typename T>
         class ArrayAllocator
         {
         public:
                 ArrayAllocator() = default;
-                ArrayAllocator(size_t size, eArrayAllocatorType alloc_type) : alloc_type_(alloc_type)
+                ArrayAllocator(size_t size, eMemAllocType alloc_type) : alloc_type_(alloc_type)
                 {
                         resize(size, alloc_type);
                 }
                 ~ArrayAllocator() = default;
 
                 void resize(size_t size) { resize(size, alloc_type_); }
-                void resize(size_t size, eArrayAllocatorType alloc_type)
+                void resize(size_t size, eMemAllocType alloc_type)
                 {
                         alloc_type_ = alloc_type;
 #ifdef __CUDACC__
-                        if (static_cast<uint8_t>(alloc_type) & static_cast<uint8_t>(eArrayAllocatorType::HOST))
+                        if (static_cast<uint8_t>(alloc_type) & static_cast<uint8_t>(eMemAllocType::HOST))
                         {
                                 host_.clear();
                                 host_.resize(size);
                         }
-                        if (static_cast<uint8_t>(alloc_type) & static_cast<uint8_t>(eArrayAllocatorType::DEVICE))
+                        if (static_cast<uint8_t>(alloc_type) & static_cast<uint8_t>(eMemAllocType::DEVICE))
                         {
                                 device_.clear();
                                 device_.resize(size);
@@ -50,7 +45,7 @@ namespace cuvoxmap
                         return;
 
 #else
-                        if (static_cast<uint8_t>(alloc_type) & static_cast<uint8_t>(eArrayAllocatorType::HOST))
+                        if (static_cast<uint8_t>(alloc_type) & static_cast<uint8_t>(eMemAllocType::HOST))
                         {
                                 host_vector_.clear();
                                 host_vector_.resize(size);
@@ -85,7 +80,7 @@ namespace cuvoxmap
                 bool host_to_device()
                 {
 #ifdef __CUDACC__
-                        if (alloc_type_ == eArrayAllocatorType::HOST_AND_DEVICE)
+                        if (alloc_type_ == eMemAllocType::HOST_AND_DEVICE)
                         {
                                 device_ = host_;
                                 return true;
@@ -96,7 +91,7 @@ namespace cuvoxmap
                 bool device_to_host()
                 {
 #ifdef __CUDACC__
-                        if (alloc_type_ == eArrayAllocatorType::HOST_AND_DEVICE)
+                        if (alloc_type_ == eMemAllocType::HOST_AND_DEVICE)
                         {
                                 host_ = device_;
                                 return true;
@@ -108,7 +103,7 @@ namespace cuvoxmap
                 bool fill_host(T value)
                 {
 #ifdef __CUDACC__
-                        if (static_cast<uint8_t>(alloc_type_) & static_cast<uint8_t>(eArrayAllocatorType::HOST))
+                        if (static_cast<uint8_t>(alloc_type_) & static_cast<uint8_t>(eMemAllocType::HOST))
                         {
                                 thrust::fill(host_.begin(), host_.end(), value);
                                 return true;
@@ -124,7 +119,7 @@ namespace cuvoxmap
                 bool fill_device(T value)
                 {
 #ifdef __CUDACC__
-                        if (static_cast<uint8_t>(alloc_type_) & static_cast<uint8_t>(eArrayAllocatorType::DEVICE))
+                        if (static_cast<uint8_t>(alloc_type_) & static_cast<uint8_t>(eMemAllocType::DEVICE))
                         {
                                 thrust::fill(device_.begin(), device_.end(), value);
                                 return true;
@@ -138,7 +133,7 @@ namespace cuvoxmap
                 T get_host(size_t idx)
                 {
 #ifdef __CUDACC__
-                        if (static_cast<uint8_t>(alloc_type_) & static_cast<uint8_t>(eArrayAllocatorType::HOST))
+                        if (static_cast<uint8_t>(alloc_type_) & static_cast<uint8_t>(eMemAllocType::HOST))
                         {
                                 return host_[idx];
                         }
@@ -152,7 +147,7 @@ namespace cuvoxmap
                 T get_device(size_t idx)
                 {
 #ifdef __CUDACC__
-                        if (static_cast<uint8_t>(alloc_type_) & static_cast<uint8_t>(eArrayAllocatorType::DEVICE))
+                        if (static_cast<uint8_t>(alloc_type_) & static_cast<uint8_t>(eMemAllocType::DEVICE))
                         {
                                 return device_[idx];
                         }
@@ -169,6 +164,6 @@ namespace cuvoxmap
 #else
                 std::vector<T> host_vector_;
 #endif
-                eArrayAllocatorType alloc_type_{eArrayAllocatorType::NONE};
+                eMemAllocType alloc_type_{eMemAllocType::NONE};
         };
 }

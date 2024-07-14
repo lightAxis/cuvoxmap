@@ -4,7 +4,7 @@
 
 TEST_CASE("MapAccessorHost cpu")
 {
-    cuvoxmap::MapAllocator<float, 2> alloc{cuvoxmap::uIdx2D{10, 20}};
+    cuvoxmap::MapAllocator<float, 2> alloc{cuvoxmap::uIdx2D{10, 20}, cuvoxmap::eMemAllocType::HOST};
     cuvoxmap::MapAccesssorHost<float, 2> accessor{alloc.get_mapData()};
 
     SECTION("cpu basic")

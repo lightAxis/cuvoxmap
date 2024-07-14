@@ -4,10 +4,10 @@
 TEST_CASE("ArrayAllocator cpu")
 {
     cuvoxmap::ArrayAllocator<int> alloc{};
-    alloc.resize(100, cuvoxmap::eArrayAllocatorType::HOST);
+    alloc.resize(100, cuvoxmap::eMemAllocType::HOST);
 
     cuvoxmap::ArrayAllocator<float> alloc2{};
-    alloc2.resize(100, cuvoxmap::eArrayAllocatorType::HOST);
+    alloc2.resize(100, cuvoxmap::eMemAllocType::HOST);
 
     SECTION("int test")
     {

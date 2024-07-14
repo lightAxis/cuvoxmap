@@ -10,7 +10,7 @@ namespace cuvoxmap
     {
     public:
         MapImpl() = default;
-        explicit MapImpl(const Vector<uint32_t, Dim> &axis_sizes);
+        explicit MapImpl(const Vector<uint32_t, Dim> &axis_sizes, eMemAllocType alloc_type);
 
         ~MapImpl() = default;
         inline T *get_host_data() { return array_.get_host_ptr(); }
@@ -23,9 +23,12 @@ namespace cuvoxmap
         void fill_host(T value) { array_.fill_host(value); }
         void fill_device(T value) { array_.fill_device(value); }
 
+        eMemAllocType get_alloc_type() const { return alloc_type_; }
+
     private:
         // Some data members
         ArrayAllocator<T> array_;
         Vector<uint32_t, Dim> axis_sizes_;
+        eMemAllocType alloc_type_{eMemAllocType::NONE};
     };
 }

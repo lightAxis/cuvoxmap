@@ -7,9 +7,9 @@ namespace cuvoxmap
 {
 
     template <typename T, uint8_t Dim>
-    MapAllocator<T, Dim>::MapAllocator(const Vector<uint32_t, Dim> &axis_sizes)
+    MapAllocator<T, Dim>::MapAllocator(const Vector<uint32_t, Dim> &axis_sizes, eMemAllocType alloc_type)
     {
-        impl_ = new MapImpl<T, Dim>(axis_sizes);
+        impl_ = new MapImpl<T, Dim>(axis_sizes, alloc_type);
     }
 
     template <typename T, uint8_t Dim>
@@ -27,6 +27,8 @@ namespace cuvoxmap
         mapData.host_data = impl_->get_host_data();
         mapData.device_data = impl_->get_device_data();
         mapData.is_gpu_used = false;
+        mapData.is_host_data_allocated = static_cast<uint8_t>(impl_->get_alloc_type()) & static_cast<uint8_t>(eMemAllocType::HOST);
+        mapData.is_device_data_allocated = static_cast<uint8_t>(impl_->get_alloc_type()) & static_cast<uint8_t>(eMemAllocType::DEVICE);
         return mapData;
     }
 
