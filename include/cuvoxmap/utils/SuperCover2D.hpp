@@ -52,8 +52,8 @@ namespace cuvoxmap
 
             tMaxOffset = Pos2({delta[0] != 0 ? (step[0] > 0 ? (resolution - offset[0]) / delta[0] : offset[0] / -delta[0]) : static_cast<PosT>(1e+20f),
                                delta[1] != 0 ? (step[1] > 0 ? (resolution - offset[1]) / delta[1] : offset[1] / -delta[1]) : static_cast<PosT>(1e+20f)});
-            tDeleta = Pos2({delta[0] != 0 ? resolution / fabs(delta[0]) : static_cast<PosT>(1e+20f),
-                            delta[1] != 0 ? resolution / fabs(delta[1]) : static_cast<PosT>(1e+20f)});
+            tDeleta = Pos2({delta[0] != 0 ? resolution / VectorImpl::Impl::abs_fd(delta[0]) : static_cast<PosT>(1e+20f),
+                            delta[1] != 0 ? resolution / VectorImpl::Impl::abs_fd(delta[1]) : static_cast<PosT>(1e+20f)});
 
             tMaxMulCount = Idx2::Zeros();
         }

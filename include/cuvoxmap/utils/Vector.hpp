@@ -24,6 +24,9 @@ namespace cuvoxmap
         {
             static __host__ __device__ float sqrt_fd(float x) { return sqrtf(x); }
             static __host__ __device__ double sqrt_fd(double x) { return sqrt(x); }
+
+            static __host__ __device__ float abs_fd(float x) { return fabsf(x); }
+            static __host__ __device__ double abs_fd(double x) { return fabs(x); }
         };
     }
     /**

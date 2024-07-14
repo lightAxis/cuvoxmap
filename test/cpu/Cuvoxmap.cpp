@@ -59,4 +59,44 @@ TEST_CASE("Cuvoxmap_cpu")
         REQUIRE(cmap.get_map_withIdx<getset::PRB_FAST_LOC>(Idx2D{0, 0}) == 0.5f);
         REQUIRE(cmap.get_map_withIdx<getset::ST_FAST_LOC>(Idx2D{0, 0}) == static_cast<uint8_t>(eVoxel::UNOBSERVED));
     }
+
+    SECTION("line check test")
+    {
+        cmap.fill<map::STATE>(static_cast<uint8_t>(eVoxel::UNKNOWN));
+        cmap.set_map_withIdx<getset::ST_FAST_LOC>(Idx2D{2, 3}, static_cast<uint8_t>(eVoxel::OCCUPIED));
+        cmap.set_map_withIdx<getset::ST_FAST_LOC>(Idx2D{3, 4}, static_cast<uint8_t>(eVoxel::FREE));
+        cmap.set_map_withIdx<getset::ST_FAST_LOC>(Idx2D{4, 5}, static_cast<uint8_t>(eVoxel::UNOBSERVED));
+
+        Idx2D start_lidx{1, 2};
+        Float2D start_lpos = cmap.get_glob_loc_cvt().lidx_2_lpos(start_lidx);
+        Float2D start_gpos = cmap.get_glob_loc_cvt().lpos_2_gpos(start_lpos);
+
+        Idx2D end_lidx{5, 6};
+        Float2D end_lpos = cmap.get_glob_loc_cvt().lidx_2_lpos(end_lidx);
+        Float2D end_gpos = cmap.get_glob_loc_cvt().lpos_2_gpos(end_lpos);
+
+        REQUIRE(cmap.check_line_state_map<linecheck::CHK_GLB_RAY>(start_gpos, end_gpos, static_cast<uint8_t>(eVoxel::OCCUPIED)) == true);
+        REQUIRE(cmap.check_line_state_map<linecheck::CHK_GLB_SUP>(start_gpos, end_gpos, static_cast<uint8_t>(eVoxel::FREE)) == true);
+        REQUIRE(cmap.check_line_state_map<linecheck::CHK_GLB_SUP>(start_gpos, end_gpos, static_cast<uint8_t>(eVoxel::UNOBSERVED)) == true);
+
+        REQUIRE(cmap.check_line_state_map<linecheck::NON_LOC_RAY>(start_lpos, end_lpos, static_cast<uint8_t>(eVoxel::OCCUPIED)) == true);
+        REQUIRE(cmap.check_line_state_map<linecheck::NON_LOC_SUP>(start_lpos, end_lpos, static_cast<uint8_t>(eVoxel::FREE)) == true);
+        REQUIRE(cmap.check_line_state_map<linecheck::NON_LOC_SUP>(start_lpos, end_lpos, static_cast<uint8_t>(eVoxel::UNOBSERVED)) == true);
+
+        Idx2D start2_lidx{4, 3};
+        Float2D start2_lpos = cmap.get_glob_loc_cvt().lidx_2_lpos(start2_lidx);
+        Float2D start2_gpos = cmap.get_glob_loc_cvt().lpos_2_gpos(start2_lpos);
+
+        Idx2D end2_lidx{6, 5};
+        Float2D end2_lpos = cmap.get_glob_loc_cvt().lidx_2_lpos(end2_lidx);
+        Float2D end2_gpos = cmap.get_glob_loc_cvt().lpos_2_gpos(end2_lpos);
+
+        REQUIRE(cmap.check_line_state_map<linecheck::CHK_GLB_RAY>(start2_gpos, end2_gpos, static_cast<uint8_t>(eVoxel::OCCUPIED)) == false);
+        REQUIRE(cmap.check_line_state_map<linecheck::CHK_GLB_SUP>(start2_gpos, end2_gpos, static_cast<uint8_t>(eVoxel::FREE)) == false);
+        REQUIRE(cmap.check_line_state_map<linecheck::CHK_GLB_SUP>(start2_gpos, end2_gpos, static_cast<uint8_t>(eVoxel::UNOBSERVED)) == false);
+
+        REQUIRE(cmap.check_line_state_map<linecheck::NON_LOC_RAY>(start2_lpos, end2_lpos, static_cast<uint8_t>(eVoxel::OCCUPIED)) == false);
+        REQUIRE(cmap.check_line_state_map<linecheck::NON_LOC_SUP>(start2_lpos, end2_lpos, static_cast<uint8_t>(eVoxel::FREE)) == false);
+        REQUIRE(cmap.check_line_state_map<linecheck::NON_LOC_SUP>(start2_lpos, end2_lpos, static_cast<uint8_t>(eVoxel::UNOBSERVED)) == false);
+    }
 }

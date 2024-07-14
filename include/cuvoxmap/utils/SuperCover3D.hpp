@@ -60,9 +60,9 @@ namespace cuvoxmap
             tMaxOffset = Pos3({delta[0] != 0 ? (step[0] > 0 ? (resolution - offset[0]) / delta[0] : offset[0] / -delta[0]) : static_cast<PosT>(1e+20f),
                                delta[1] != 0 ? (step[1] > 0 ? (resolution - offset[1]) / delta[1] : offset[1] / -delta[1]) : static_cast<PosT>(1e+20f),
                                delta[2] != 0 ? (step[2] > 0 ? (resolution - offset[2]) / delta[2] : offset[2] / -delta[2]) : static_cast<PosT>(1e+20f)});
-            tDeleta = Pos3({delta[0] != 0 ? resolution / std::abs(delta[0]) : static_cast<PosT>(1e+20f),
-                            delta[1] != 0 ? resolution / std::abs(delta[1]) : static_cast<PosT>(1e+20f),
-                            delta[2] != 0 ? resolution / std::abs(delta[2]) : static_cast<PosT>(1e+20f)});
+            tDeleta = Pos3({delta[0] != 0 ? resolution / VectorImpl::Impl::abs_fd(delta[0]) : static_cast<PosT>(1e+20f),
+                            delta[1] != 0 ? resolution / VectorImpl::Impl::abs_fd(delta[1]) : static_cast<PosT>(1e+20f),
+                            delta[2] != 0 ? resolution / VectorImpl::Impl::abs_fd(delta[2]) : static_cast<PosT>(1e+20f)});
 
             tMaxMulCount = Idx3::Zeros();
         }
