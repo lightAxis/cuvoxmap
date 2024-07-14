@@ -3,10 +3,10 @@
 #include <catch2/catch_test_macros.hpp>
 #include "../custom_matchers/device_testmacros.cuh"
 
-__global__ void cpu_basic_kernel(cuvoxmap::MapAccesssorDevice<float, 2> map)
+__global__ void cpu_basic_kernel(cuvoxmap::MapAccessorDevice<float, 2> map)
 {
-    map.set_value(1, cuvoxmap::uIdx2D{1, 2});
-    map.set_value(2, cuvoxmap::uIdx2D{2, 3});
+    map.set_value(cuvoxmap::uIdx2D{1, 2}, 1);
+    map.set_value(cuvoxmap::uIdx2D{2, 3}, 2);
 
     if (!CUSTOM_TEST_KERNEL::KERNEL_TEST(map.get_value(cuvoxmap::uIdx2D{1, 2}), 1.0f))
         return;
@@ -36,7 +36,7 @@ __global__ void cpu_basic_kernel(cuvoxmap::MapAccesssorDevice<float, 2> map)
 TEST_CASE("MapAccessorDevice gpu")
 {
     cuvoxmap::MapAllocator<float, 2> alloc{cuvoxmap::uIdx2D{10, 20}, cuvoxmap::eMemAllocType::HOST_AND_DEVICE};
-    cuvoxmap::MapAccesssorDevice<float, 2> accessor{alloc.get_mapData()};
+    cuvoxmap::MapAccessorDevice<float, 2> accessor{alloc.get_mapData()};
 
     SECTION("cpu basic")
     {

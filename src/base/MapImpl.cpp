@@ -26,10 +26,19 @@ namespace cuvoxmap
         throw std::runtime_error("Need to build with CUDA support");
     }
 
+    template class MapImpl<uint8_t, 1>;
     template class MapImpl<uint8_t, 2>;
     template class MapImpl<uint8_t, 3>;
+    template class MapImpl<uint16_t, 1>;
     template class MapImpl<uint16_t, 2>;
     template class MapImpl<uint16_t, 3>;
+    template class MapImpl<int, 1>;
+    template class MapImpl<int, 2>;
+    template class MapImpl<int, 3>;
+    template class MapImpl<float, 1>;
     template class MapImpl<float, 2>;
     template class MapImpl<float, 3>;
+    template class MapImpl<double, 1>;
+    template class MapImpl<double, 2>;
+    template class MapImpl<double, 3>;
 };

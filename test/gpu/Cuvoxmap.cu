@@ -4,13 +4,13 @@
 
 using namespace cuvoxmap;
 
-TEST_CASE("Cuvoxmap_cpu")
+TEST_CASE("Cuvoxmap_gpu")
 {
     cuvoxmap::cuvoxmap2D::init_s init;
     init.x_axis_len = 10;
     init.y_axis_len = 10;
     init.resolution = 0.5f;
-    init.use_gpu = false;
+    init.use_gpu = true;
     cuvoxmap::cuvoxmap2D cmap{init};
     cmap.set_origin(Float2D{1.2f, 1.5f});
 
@@ -110,7 +110,25 @@ TEST_CASE("Cuvoxmap_cpu")
         cmap.set_map_withIdx<getset::ST_FAST_LOC>(Idx2D{3, 4}, static_cast<uint8_t>(eVoxel::OCCUPIED));
 
         cmap.distance_map_update_withCPU();
+        printf("\n\nCPU\n");
+        for (int x = 0; x < 10; x++)
+        {
+            printf("\n");
+            for (int y = 0; y < 10; y++)
+            {
+                printf("%f ", cmap.get_map_withIdx<getset::DST_FAST_LOC>(Idx2D{x, y}));
+            }
+        }
 
+        // cmap.fill_all<map::DISTANCE>(std::numeric_limits<float>::max());
+
+        cmap.set_map_withIdx<getset::ST_FAST_LOC>(Idx2D{4, 5}, static_cast<uint8_t>(eVoxel::OCCUPIED));
+        cmap.host_to_device<map::STATE>();
+        // auto aa = cmap.get_map_withIdx<getset::DST_FAST_LOC>(Idx2D{1, 1});
+        cmap.distance_map_update_withGPU();
+        cmap.device_to_host<map::DISTANCE>();
+
+        printf("\n\nGPU\n");
         for (int x = 0; x < 10; x++)
         {
             printf("\n");

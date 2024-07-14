@@ -55,10 +55,19 @@ namespace cuvoxmap
         // throw std::runtime_error("Need to build with CUDA support");
     }
 
+    template class MapAllocator<uint8_t, 1>;
     template class MapAllocator<uint8_t, 2>;
     template class MapAllocator<uint8_t, 3>;
+    template class MapAllocator<uint16_t, 1>;
     template class MapAllocator<uint16_t, 2>;
     template class MapAllocator<uint16_t, 3>;
+    template class MapAllocator<int, 1>;
+    template class MapAllocator<int, 2>;
+    template class MapAllocator<int, 3>;
+    template class MapAllocator<float, 1>;
     template class MapAllocator<float, 2>;
     template class MapAllocator<float, 3>;
+    template class MapAllocator<double, 1>;
+    template class MapAllocator<double, 2>;
+    template class MapAllocator<double, 3>;
 }

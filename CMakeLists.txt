@@ -50,6 +50,7 @@ if(CUVOXMAP_USING_CUDA)
         src/base/MapAllocator.cu 
         src/base/MapImpl.cu
         src/cuvoxmap.cpp
+        src/distance_transform.cpp
         src/distance_transform.cu)
 endif()
 add_library(cuvoxmap_cpu 

@@ -5,7 +5,7 @@
 TEST_CASE("MapAccessorHost gpu")
 {
     cuvoxmap::MapAllocator<float, 2> alloc{cuvoxmap::uIdx2D{10, 20}, cuvoxmap::eMemAllocType::HOST_AND_DEVICE};
-    cuvoxmap::MapAccesssorHost<float, 2> accessor{alloc.get_mapData()};
+    cuvoxmap::MapAccessorHost<float, 2> accessor{alloc.get_mapData()};
 
     SECTION("cpu basic")
     {

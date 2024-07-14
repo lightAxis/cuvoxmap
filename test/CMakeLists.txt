@@ -47,5 +47,7 @@ add_test_executable(SuperCover3D_gpu        SRCS gpu/SuperCover3D.cu        LIBS
 add_test_executable(GlobLocalCvt_gpu        SRCS gpu/GlobLocalCvt.cu        LIBS cuvoxmap_gpu)
 add_test_executable(Box_gpu                 SRCS gpu/Box.cu                 LIBS cuvoxmap_gpu)
 
+add_test_executable(Cuvoxmap_gpu            SRCS gpu/Cuvoxmap.cu            LIBS cuvoxmap_gpu)
+
 
 

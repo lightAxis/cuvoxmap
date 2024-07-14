@@ -119,12 +119,14 @@ namespace cuvoxmap
             uint32_t x_axis_len;
             uint32_t y_axis_len;
             float resolution;
+            bool use_gpu;
         };
 
         struct param_s
         {
             uIdx2D axis_sizes;
             float resolution;
+            bool use_gpu;
         };
 
         cuvoxmap2D() = default;
@@ -206,23 +208,41 @@ namespace cuvoxmap
             }
         }
 
-        template <eMap mapT>
+        template <eMap mapT, eMemAllocType memT>
         void fill_all(const typename MapType<mapT>::Type &value)
         {
             if constexpr (mapT == eMap::PROBABILITY)
             {
-                pb_map_alloc_.fill_host(value);
-                pb_map_alloc_.fill_device(value);
+                if constexpr (static_cast<uint8_t>(memT) & static_cast<uint8_t>(eMemAllocType::HOST))
+                {
+                    pb_map_alloc_.fill_host(value);
+                }
+                if constexpr (static_cast<uint8_t>(memT) & static_cast<uint8_t>(eMemAllocType::DEVICE))
+                {
+                    pb_map_alloc_.fill_device(value);
+                }
             }
             else if constexpr (mapT == eMap::STATE)
             {
-                st_map_alloc_.fill_host(value);
-                st_map_alloc_.fill_device(value);
+                if constexpr (static_cast<uint8_t>(memT) & static_cast<uint8_t>(eMemAllocType::HOST))
+                {
+                    st_map_alloc_.fill_host(value);
+                }
+                if constexpr (static_cast<uint8_t>(memT) & static_cast<uint8_t>(eMemAllocType::DEVICE))
+                {
+                    st_map_alloc_.fill_device(value);
+                }
             }
             else if constexpr (mapT == eMap::DISTANCE)
             {
-                dst_map_alloc_.fill_host(value);
-                dst_map_alloc_.fill_device(value);
+                if constexpr (static_cast<uint8_t>(memT) & static_cast<uint8_t>(eMemAllocType::HOST))
+                {
+                    dst_map_alloc_.fill_host(value);
+                }
+                if constexpr (static_cast<uint8_t>(memT) & static_cast<uint8_t>(eMemAllocType::DEVICE))
+                {
+                    dst_map_alloc_.fill_device(value);
+                }
             }
         }
 
@@ -291,7 +311,8 @@ namespace cuvoxmap
         }
 
         // TODO
-        void distance_map_update();
+        void distance_map_update_withCPU();
+        void distance_map_update_withGPU();
 
         // TODO
         // probability log odd probability
@@ -342,9 +363,14 @@ namespace cuvoxmap
         MapAllocator<MapType<eMap::DISTANCE>::Type, 2> dst_map_alloc_;   // euclidean distance map
 
         // host accessor for the maps
-        MapAccesssorHost<MapType<eMap::PROBABILITY>::Type, 2> pb_map_accessor_;
-        MapAccesssorHost<MapType<eMap::STATE>::Type, 2> st_map_accessor_;
-        MapAccesssorHost<MapType<eMap::DISTANCE>::Type, 2> dst_map_accessor_;
+        MapAccessorHost<MapType<eMap::PROBABILITY>::Type, 2> pb_map_accessor_;
+        MapAccessorHost<MapType<eMap::STATE>::Type, 2> st_map_accessor_;
+        MapAccessorHost<MapType<eMap::DISTANCE>::Type, 2> dst_map_accessor_;
+
+        // extra array for euclidean distance mapping
+        MapAllocator<MapType<eMap::DISTANCE>::Type, 2> temp1_dstmap_alloc_;
+        MapAllocator<MapType<eMap::DISTANCE>::Type, 1> z_buffer_alloc_;
+        MapAllocator<int, 1> v_buffer_alloc_;
 
         param_s param_;
         GlobLocalCvt<MapType<eMap::PROBABILITY>::Type, 2> glc_;
