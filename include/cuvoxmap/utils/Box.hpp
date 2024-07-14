@@ -126,7 +126,6 @@ namespace cuvoxmap
             return false;
         }
 
-    private:
         inline __host__ __device__ bool isInside(const Vector<T, Dim> &vec)
         {
             for (uint8_t i = 0; i < Dim; i++)
@@ -139,6 +138,7 @@ namespace cuvoxmap
             return true;
         }
 
+    private:
         inline __host__ __device__ bool isInsidePlane(T k, const Vector<T, Dim> &P1, const Vector<T, Dim> &P2, uint8_t axis, Vector<T, Dim> &out)
         {
             k = getTofLineSeg(k, P1[axis], P2[axis]);
@@ -182,4 +182,34 @@ namespace cuvoxmap
     using Box1d = Box<double, 1>;
     using Box2d = Box<double, 2>;
     using Box3d = Box<double, 3>;
+
+    template <>
+    inline __host__ __device__ bool Box<float, 2>::isInside(const Vector<float, 2> &vec)
+    {
+        return vec[0] >= lower_b_[0] && vec[0] <= upper_b_[0] &&
+               vec[1] >= lower_b_[1] && vec[1] <= upper_b_[1];
+    }
+
+    template <>
+    inline __host__ __device__ bool Box<float, 3>::isInside(const Vector<float, 3> &vec)
+    {
+        return vec[0] >= lower_b_[0] && vec[0] <= upper_b_[0] &&
+               vec[1] >= lower_b_[1] && vec[1] <= upper_b_[1] &&
+               vec[2] >= lower_b_[2] && vec[2] <= upper_b_[2];
+    }
+
+    template <>
+    inline __host__ __device__ bool Box<double, 2>::isInside(const Vector<double, 2> &vec)
+    {
+        return vec[0] >= lower_b_[0] && vec[0] <= upper_b_[0] &&
+               vec[1] >= lower_b_[1] && vec[1] <= upper_b_[1];
+    }
+
+    template <>
+    inline __host__ __device__ bool Box<double, 3>::isInside(const Vector<double, 3> &vec)
+    {
+        return vec[0] >= lower_b_[0] && vec[0] <= upper_b_[0] &&
+               vec[1] >= lower_b_[1] && vec[1] <= upper_b_[1] &&
+               vec[2] >= lower_b_[2] && vec[2] <= upper_b_[2];
+    }
 }
