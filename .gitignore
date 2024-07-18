@@ -34,3 +34,7 @@ _deps
 # Ignore all local history of files
 .history
 .ionide
+
+## ROS2
+install
+log

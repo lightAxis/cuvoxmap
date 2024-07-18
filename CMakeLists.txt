@@ -22,6 +22,17 @@ if(NOT DEFINED BUILD_TESTING)
     set(BUILD_TESTING ON)
 endif()
 
+## check TEGRA system to use unified memory or not
+if(EXISTS "/etc/nv_tegra_release")
+  target_compile_definitions(${PROJECT_NAME} PUBLIC CUDA_ARCH_TEGRA)
+  message("-- TEGRA detected, CUDA_ARCH_TEGRA is defined for unified memory")
+endif()
+
+## ROS2
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+
+
 ## enabling cuda
 if(CUVOXMAP_USING_CUDA)
     find_package(CUDA REQUIRED)
@@ -40,8 +51,6 @@ endif()
 if(NOT CMAKE_CXX_STANDARD_REQUIRED)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
-
-
 
 include_directories(include)
 
@@ -69,6 +78,39 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
     enable_testing()
     add_subdirectory(test)
 endif()
+
+## ROS2 node
+add_executable(cuvoxmap_node_cpu ros2/src/cuvoxmap_main.cpp)
+add_executable(cuvoxmap_node_gpu ros2/src/cuvoxmap_main.cpp)
+target_link_libraries(cuvoxmap_node_cpu cuvoxmap_cpu)
+target_link_libraries(cuvoxmap_node_gpu cuvoxmap_gpu)
+ament_target_dependencies(cuvoxmap_node_cpu rclcpp)
+ament_target_dependencies(cuvoxmap_node_gpu rclcpp)
+
+## install
+install(DIRECTORY include DESTINATION include)
+install(DIRECTORY ros2/include DESTINATION include)
+install(DIRECTORY ros2/launch DESTINATION share/${PROJECT_NAME})
+# install(DIRECTORY ros2/param DESTINATION share/${PROJECT_NAME})
+
+ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET )
+
+install(
+    TARGETS 
+        cuvoxmap_cpu cuvoxmap_gpu
+    EXPORT export_${PROJECT_NAME}
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+)
+
+install(
+    TARGETS 
+        cuvoxmap_node_cpu cuvoxmap_node_gpu
+    DESTINATION lib/${PROJECT_NAME}
+)
+
+ament_package()
 
 
 # add_library(cuvoxmap)
