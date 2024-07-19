@@ -15,6 +15,10 @@ namespace cuvoxmap
     public:
         MapAllocator() = default;
         MapAllocator(const Vector<uint32_t, Dim> &axis_sizes, eMemAllocType alloc_type);
+        MapAllocator(const MapAllocator &other);
+        MapAllocator(MapAllocator &&other) noexcept;
+        MapAllocator &operator=(const MapAllocator &other);
+        MapAllocator &operator=(MapAllocator &&other) noexcept;
         ~MapAllocator();
 
         MapData<T, Dim> get_mapData();
@@ -26,5 +30,6 @@ namespace cuvoxmap
 
     private:
         MapImpl<T, Dim> *impl_{nullptr};
+        inline bool is_impl_exist() const { return impl_ != nullptr; }
     };
 }

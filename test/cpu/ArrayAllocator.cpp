@@ -40,4 +40,49 @@ TEST_CASE("ArrayAllocator cpu")
 
         REQUIRE(host_ptr2[0] == 1.1f);
     }
+
+    SECTION("copy test")
+    {
+        // copy constructor
+        cuvoxmap::ArrayAllocator<float> alloc3 = alloc2;
+        auto host_ptr3 = alloc3.get_host_ptr();
+        auto host_ptr2 = alloc2.get_host_ptr();
+
+        REQUIRE(host_ptr2[0] == host_ptr2[0]);
+        REQUIRE(host_ptr2 != host_ptr3);
+
+        // copy assignment operator
+        cuvoxmap::ArrayAllocator<float> alloc5;
+        alloc5 = alloc2;
+        auto host_ptr5 = alloc5.get_host_ptr();
+
+        REQUIRE(host_ptr2[0] == host_ptr5[0]);
+        REQUIRE(host_ptr2 != host_ptr5);
+    }
+
+    SECTION("move test")
+    {
+        // init
+        cuvoxmap::ArrayAllocator<float> alloc3;
+        alloc3.resize(100, cuvoxmap::eMemAllocType::HOST);
+        alloc3.get_host_ptr()[0] = 1.1f;
+        auto host_ptr3 = alloc3.get_host_ptr();
+
+        // move constructor
+        cuvoxmap::ArrayAllocator<float> alloc4 = std::move(alloc3);
+        auto host_ptr4 = alloc4.get_host_ptr();
+        auto host_ptr3_swapped = alloc3.get_host_ptr();
+
+        REQUIRE(host_ptr3 == host_ptr4);
+        REQUIRE(host_ptr3 != host_ptr3_swapped);
+
+        // move assignment
+        cuvoxmap::ArrayAllocator<float> alloc5;
+        alloc5 = std::move(alloc4);
+        auto host_ptr5 = alloc5.get_host_ptr();
+        auto host_ptr4_swapped = alloc4.get_host_ptr();
+
+        REQUIRE(host_ptr4 == host_ptr5);
+        REQUIRE(host_ptr4 != host_ptr4_swapped);
+    }
 }

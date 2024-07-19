@@ -11,8 +11,12 @@ namespace cuvoxmap
     public:
         MapImpl() = default;
         explicit MapImpl(const Vector<uint32_t, Dim> &axis_sizes, eMemAllocType alloc_type);
-
+        MapImpl(const MapImpl &other) = default;
+        MapImpl(MapImpl &&other) noexcept = default;
+        MapImpl &operator=(const MapImpl &other) = default;
+        MapImpl &operator=(MapImpl &&other) noexcept = default;
         ~MapImpl() = default;
+
         inline T *get_host_data() { return array_.get_host_ptr(); }
         inline T *get_device_data() { return array_.get_device_ptr(); }
         inline Vector<uint32_t, Dim> get_axis_sizes() const { return axis_sizes_; }
