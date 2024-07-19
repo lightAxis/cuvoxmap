@@ -7,52 +7,7 @@ namespace cuvoxmap
     template <typename T, uint8_t Dim>
     MapAllocator<T, Dim>::MapAllocator(const Vector<uint32_t, Dim> &axis_sizes, eMemAllocType alloc_type)
     {
-        impl_ = new MapImpl<T, Dim>(axis_sizes, alloc_type);
-    }
-
-    template <typename T, uint8_t Dim>
-    MapAllocator<T, Dim>::MapAllocator(const MapAllocator<T, Dim> &other)
-    {
-        impl_ = new MapImpl<T, Dim>(*other.impl_);
-    }
-
-    template <typename T, uint8_t Dim>
-    MapAllocator<T, Dim> &MapAllocator<T, Dim>::operator=(const MapAllocator<T, Dim> &other)
-    {
-        if (this != &other)
-        {
-            if (impl_ != nullptr)
-                delete impl_;
-            impl_ = new MapImpl<T, Dim>(*other.impl_);
-        }
-        return *this;
-    }
-
-    template <typename T, uint8_t Dim>
-    MapAllocator<T, Dim>::MapAllocator(MapAllocator<T, Dim> &&other) noexcept
-    {
-        impl_ = other.impl_;
-        other.impl_ = nullptr;
-    }
-
-    template <typename T, uint8_t Dim>
-    MapAllocator<T, Dim> &MapAllocator<T, Dim>::operator=(MapAllocator<T, Dim> &&other) noexcept
-    {
-        if (this != &other)
-        {
-            if (impl_ != nullptr)
-                delete impl_;
-            impl_ = other.impl_;
-            other.impl_ = nullptr;
-        }
-        return *this;
-    }
-
-    template <typename T, uint8_t Dim>
-    MapAllocator<T, Dim>::~MapAllocator()
-    {
-        if (impl_ != nullptr)
-            delete impl_;
+        impl_ = MovablePtr<MapImpl<T, Dim>>{new MapImpl<T, Dim>{axis_sizes, alloc_type}};
     }
 
     template <typename T, uint8_t Dim>
