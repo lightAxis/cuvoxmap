@@ -3,6 +3,7 @@
 #include "../utils/ArrayIndexing.hpp"
 #include "MapData.hpp"
 #include "MemAllocType.hpp"
+#include "../utils/MovablePtr.hpp"
 
 namespace cuvoxmap
 {
@@ -15,7 +16,11 @@ namespace cuvoxmap
     public:
         MapAllocator() = default;
         MapAllocator(const Vector<uint32_t, Dim> &axis_sizes, eMemAllocType alloc_type);
-        ~MapAllocator();
+        MapAllocator(const MapAllocator &other) = default;
+        MapAllocator(MapAllocator &&other) noexcept = default;
+        MapAllocator &operator=(const MapAllocator &other) = default;
+        MapAllocator &operator=(MapAllocator &&other) noexcept = default;
+        ~MapAllocator() = default;
 
         MapData<T, Dim> get_mapData();
 
@@ -25,6 +30,7 @@ namespace cuvoxmap
         void fill_device(T value);
 
     private:
-        MapImpl<T, Dim> *impl_{nullptr};
+        MovablePtr<MapImpl<T, Dim>> impl_;
+        inline bool is_impl_exist() const { return impl_ != nullptr; }
     };
 }

@@ -60,13 +60,15 @@ if(CUVOXMAP_USING_CUDA)
         src/base/MapImpl.cu
         src/cuvoxmap.cpp
         src/distance_transform.cpp
-        src/distance_transform.cu)
+        src/distance_transform.cu
+        src/utils/MovablePtr.cu)
 endif()
 add_library(cuvoxmap_cpu 
     src/base/MapAllocator.cpp 
     src/base/MapImpl.cpp
     src/cuvoxmap.cpp
-    src/distance_transform.cpp)
+    src/distance_transform.cpp
+    src/utils/MovablePtr.cpp)
 # if(CUVOXMAP_USING_CUDA)
 #     target_compile_definitions(cuvoxmap PUBLIC CUVOXMAP_USING_CUDA)
 # endif()

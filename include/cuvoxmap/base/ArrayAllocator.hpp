@@ -25,6 +25,10 @@ namespace cuvoxmap
                 {
                         resize(size, alloc_type);
                 }
+                ArrayAllocator(const ArrayAllocator &other) = default;
+                ArrayAllocator(ArrayAllocator &&other) noexcept = default;
+                ArrayAllocator &operator=(const ArrayAllocator &other) = default;
+                ArrayAllocator &operator=(ArrayAllocator &&other) noexcept = default;
                 ~ArrayAllocator() = default;
 
                 void resize(size_t size) { resize(size, alloc_type_); }

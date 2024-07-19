@@ -9,19 +9,15 @@ namespace cuvoxmap
     template <typename T, uint8_t Dim>
     MapAllocator<T, Dim>::MapAllocator(const Vector<uint32_t, Dim> &axis_sizes, eMemAllocType alloc_type)
     {
-        impl_ = new MapImpl<T, Dim>(axis_sizes, alloc_type);
-    }
-
-    template <typename T, uint8_t Dim>
-    MapAllocator<T, Dim>::~MapAllocator()
-    {
-        if (impl_ != nullptr)
-            delete impl_;
+        impl_ = MovablePtr<MapImpl<T, Dim>>{new MapImpl<T, Dim>{axis_sizes, alloc_type}};
     }
 
     template <typename T, uint8_t Dim>
     MapData<T, Dim> MapAllocator<T, Dim>::get_mapData()
     {
+        if (!is_impl_exist())
+            throw std::runtime_error("MapAllocator not initialized");
+
         MapData<T, Dim> mapData;
         mapData.axis_sizes = impl_->get_axis_sizes();
         mapData.host_data = impl_->get_host_data();
@@ -45,14 +41,17 @@ namespace cuvoxmap
     template <typename T, uint8_t Dim>
     void MapAllocator<T, Dim>::fill_host(T value)
     {
+        if (!is_impl_exist())
+            throw std::runtime_error("MapAllocator not initialized");
         impl_->fill_host(value);
     }
 
     template <typename T, uint8_t Dim>
     void MapAllocator<T, Dim>::fill_device(T value)
     {
-
-        // throw std::runtime_error("Need to build with CUDA support");
+        if (!is_impl_exist())
+            throw std::runtime_error("MapAllocator not initialized");
+        throw std::runtime_error("Need to build with CUDA support");
     }
 
     template class MapAllocator<uint8_t, 1>;
