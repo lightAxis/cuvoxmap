@@ -120,6 +120,8 @@ namespace cuvoxmap
             uint32_t y_axis_len;
             float resolution;
             bool use_gpu;
+            init_s() = default;
+            init_s(uint32_t x, uint32_t y, float res, bool gpu) : x_axis_len(x), y_axis_len(y), resolution(res), use_gpu(gpu) {}
         };
 
         struct param_s
@@ -310,7 +312,6 @@ namespace cuvoxmap
             return false;
         }
 
-        // TODO
         void distance_map_update_withCPU();
         void distance_map_update_withGPU();
 
