@@ -28,10 +28,6 @@ if(EXISTS "/etc/nv_tegra_release")
   message("-- TEGRA detected, CUDA_ARCH_TEGRA is defined for unified memory")
 endif()
 
-## ROS2
-find_package(ament_cmake REQUIRED)
-find_package(rclcpp REQUIRED)
-
 
 ## enabling cuda
 if(CUVOXMAP_USING_CUDA)
@@ -68,6 +64,7 @@ add_library(cuvoxmap_cpu
     src/base/MapImpl.cpp
     src/cuvoxmap.cpp
     src/distance_transform.cpp
+    src/cuvoxmap_gpuonly.cpp
     src/utils/MovablePtr.cpp)
 # if(CUVOXMAP_USING_CUDA)
 #     target_compile_definitions(cuvoxmap PUBLIC CUVOXMAP_USING_CUDA)
@@ -81,13 +78,23 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
     add_subdirectory(test)
 endif()
 
+################
+##### ROS2 #####
+################
+
+# find packages
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(sensor_msgs REQUIRED)
+include_directories(ros2/include)
+
 ## ROS2 node
 add_executable(cuvoxmap_node_cpu ros2/src/cuvoxmap_main.cpp)
-add_executable(cuvoxmap_node_gpu ros2/src/cuvoxmap_main.cpp)
+add_executable(cuvoxmap_node_gpu ros2/src/cuvoxmap_main_gpu.cpp)
 target_link_libraries(cuvoxmap_node_cpu cuvoxmap_cpu)
 target_link_libraries(cuvoxmap_node_gpu cuvoxmap_gpu)
-ament_target_dependencies(cuvoxmap_node_cpu rclcpp)
-ament_target_dependencies(cuvoxmap_node_gpu rclcpp)
+ament_target_dependencies(cuvoxmap_node_cpu rclcpp sensor_msgs)
+ament_target_dependencies(cuvoxmap_node_gpu rclcpp sensor_msgs)
 
 ## install
 install(DIRECTORY include DESTINATION include)
