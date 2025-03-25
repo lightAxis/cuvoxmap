@@ -1,24 +1,37 @@
 #pragma once
 
-#include <rclcpp/rclcpp.hpp>
 #include <cuvoxmap/cuvoxmap.hpp>
+
+#include <rclcpp/rclcpp.hpp>
+
 
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
 class cuvoxmapNode : public rclcpp::Node
 {
 public:
-    cuvoxmapNode(bool buildWithDevice = false) : Node("cuvoxmap_node"),
-                                                 map_(cuvoxmap::cuvoxmap2D::init_s{10, 20, 0.25f, buildWithDevice ? true : false})
+    cuvoxmapNode(cuvoxmap::cuvoxmap2D::init_s init) : Node("cuvoxmap_node"),
+                                                      map_(init)
     {
-        map_.set_origin(cuvoxmap::Float2D{2.1f, 3.2f});
-        map_.set_map_withIdx<cuvoxmap::getset::ST_FAST_LOC>(cuvoxmap::Idx2D{5, 10}, static_cast<uint8_t>(cuvoxmap::eVoxel::OCCUPIED));
-        map_.set_map_withIdx<cuvoxmap::getset::ST_FAST_LOC>(cuvoxmap::Idx2D{1, 2}, static_cast<uint8_t>(cuvoxmap::eVoxel::OCCUPIED));
-
-        map_.fill_all<cuvoxmap::eMap::DISTANCE, cuvoxmap::eMemAllocType::DEVICE>(9999.0f);
-        map_.host_to_device<cuvoxmap::eMap::STATE>();
-        map_.distance_map_update_withGPU();
-        map_.device_to_host<cuvoxmap::eMap::DISTANCE>();
+        map_.set_origin(cuvoxmap::Float2D{1.2f, 1.5f});
+        map_.set_map_withIdx<cuvoxmap::getset::ST_FAST_LOC>(cuvoxmap::Idx2D{2, 3}, static_cast<uint8_t>(cuvoxmap::eVoxel::OCCUPIED));
+        map_.set_map_withIdx<cuvoxmap::getset::ST_FAST_LOC>(cuvoxmap::Idx2D{3, 4}, static_cast<uint8_t>(cuvoxmap::eVoxel::OCCUPIED));
+        // map_.set_map_withIdx<cuvoxmap::getset::ST_FAST_LOC>(cuvoxmap::Idx2D{5, 10}, static_cast<uint8_t>(cuvoxmap::eVoxel::OCCUPIED));
+        // map_.set_map_withIdx<cuvoxmap::getset::ST_FAST_LOC>(cuvoxmap::Idx2D{1, 2}, static_cast<uint8_t>(cuvoxmap::eVoxel::OCCUPIED));
+        auto aa = map_.get_glob_loc_cvt();
+        const bool buildWithDevice = init.use_gpu;
+        if (buildWithDevice)
+        {
+            map_.fill_all<cuvoxmap::eMap::DISTANCE, cuvoxmap::eMemAllocType::DEVICE>(9999.0f);
+            map_.host_to_device<cuvoxmap::eMap::STATE>();
+            map_.distance_map_update_withGPU();
+            map_.device_to_host<cuvoxmap::eMap::DISTANCE>();
+        }
+        else
+        {
+            map_.fill_all<cuvoxmap::eMap::DISTANCE, cuvoxmap::eMemAllocType::HOST>(9999.0f);
+            map_.distance_map_update_withCPU();
+        }
 
         // TODO: implement the host_to_device, distance_map_update with GPU for CPU only build. but, throw std::runtime error when function called.
         // TODO: now implementation is skipped for CPU only build. causing build failure when build with device is false.
@@ -39,7 +52,7 @@ private:
     void map_display_cb()
     {
         auto cvt = map_.get_glob_loc_cvt();
-        cuvoxmap::Indexing<2> idxing(cuvoxmap::uIdx2D{10, 20});
+        auto idxing = cuvoxmap::Indexing<2>(cvt.get_local_size());
 
         sensor_msgs::msg::PointCloud2 msg;
         msg.header.frame_id = "map";

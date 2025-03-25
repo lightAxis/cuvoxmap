@@ -40,9 +40,6 @@ if(CUVOXMAP_USING_CUDA)
     message(STATUS "CUDA DETECTED : ARCH " ${CMAKE_CUDA_ARCHITECTURES} " VERSION " ${NVCC_VERSION})
 endif()
 
-# generate compile_commands.json
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
 # using C++ 17
 if(NOT CMAKE_CXX_STANDARD)
     set(CMAKE_CXX_STANDARD 17)
@@ -103,6 +100,18 @@ target_link_libraries(cuvoxmap_node_cpu cuvoxmap_cpu)
 target_link_libraries(cuvoxmap_node_gpu cuvoxmap_gpu)
 ament_target_dependencies(cuvoxmap_node_cpu rclcpp sensor_msgs)
 ament_target_dependencies(cuvoxmap_node_gpu rclcpp sensor_msgs)
+
+## check dir exist & create
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/ros2/param")
+    file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/ros2/param")
+endif()
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/ros2/launch")
+    file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/ros2/launch")
+endif()
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/ros2/rviz")
+    file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/ros2/rviz")
+endif()
+
 
 ## install
 install(DIRECTORY include DESTINATION include)
