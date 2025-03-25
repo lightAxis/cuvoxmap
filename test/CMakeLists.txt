@@ -34,7 +34,8 @@ add_test_executable(SuperCover3D_cpu        SRCS cpu/SuperCover3D.cpp       LIBS
 add_test_executable(GlobLocalCvt_cpu        SRCS cpu/GlobLocalCvt.cpp       LIBS cuvoxmap_cpu)
 add_test_executable(Box_cpu                 SRCS cpu/Box.cpp                LIBS cuvoxmap_cpu)
 
-add_test_executable(Cuvoxmap_cpu            SRCS cpu/Cuvoxmap.cpp           LIBS cuvoxmap_cpu)
+add_test_executable(Cuvoxmap_cpu            SRCS cpu/Cuvoxmap_cpu.cpp           LIBS cuvoxmap_cpu)
+add_test_executable(Cuvoxmap_cpu_but_gpu    SRCS cpu/Cuvoxmap_cpu_but_gpu.cu    LIBS cuvoxmap_cpu)
 
 # GPU tests
 add_test_executable(Vectors_gpu             SRCS gpu/Vectors.cu             LIBS cuvoxmap_gpu)
@@ -50,6 +51,7 @@ add_test_executable(GlobLocalCvt_gpu        SRCS gpu/GlobLocalCvt.cu        LIBS
 add_test_executable(Box_gpu                 SRCS gpu/Box.cu                 LIBS cuvoxmap_gpu)
 
 add_test_executable(Cuvoxmap_gpu            SRCS gpu/Cuvoxmap.cu            LIBS cuvoxmap_gpu)
+add_test_executable(Cuvoxmap_gpu_but_cpu    SRCS gpu/Cuvoxmap_gpu_but_cpu.cpp LIBS cuvoxmap_gpu)
 
 
 

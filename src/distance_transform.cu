@@ -40,8 +40,8 @@ namespace cuvoxmap
         MapAccessorDevice<MapT, 2> temp1_distmap{temp1_dstmap_alloc_.get_mapData()};
         MapAccessorDevice<MapT, 2> distmap{dst_map_alloc_.get_mapData()};
 
-        fill_distance1_x<<<gridsize_x, blockSize>>>(statemap, temp1_distmap, totalSize_x, array_ptr);
-        fill_distance2_y<<<gridsize_y, blockSize>>>(temp1_distmap, distmap, totalSize_y, array_ptr, param_.resolution);
+        fill_distance1_x<<<gridsize_y, blockSize>>>(statemap, temp1_distmap, totalSize_y, array_ptr);
+        fill_distance2_y<<<gridsize_x, blockSize>>>(temp1_distmap, distmap, totalSize_x, array_ptr, param_.resolution);
 
         cudaDeviceSynchronize();
     }
