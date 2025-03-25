@@ -1,5 +1,7 @@
 #pragma once
 
+#include "cuvoxmap_param.hpp"
+
 #include "base/MapAllocator.hpp"
 #include "base/MapAccessorHost.hpp"
 
@@ -37,26 +39,13 @@ namespace cuvoxmap
         LOCAL = 0x02,
     };
 
+    // map date type specialization
     template <eMap mapT>
     struct MapType
     {
-        using Type = void;
-    };
-    // MapType specialization
-    template <>
-    struct MapType<eMap::PROBABILITY>
-    {
-        using Type = float;
-    };
-    template <>
-    struct MapType<eMap::STATE>
-    {
-        using Type = uint8_t;
-    };
-    template <>
-    struct MapType<eMap::DISTANCE>
-    {
-        using Type = float;
+        using Type = std::conditional_t<mapT == eMap::PROBABILITY, float,
+                                        std::conditional_t<mapT == eMap::STATE, uint8_t,
+                                                           std::conditional_t<mapT == eMap::DISTANCE, float, void>>>;
     };
 
     template <eMap mapT, eCheck checkT = eCheck::BOUNDARY, eFrame frameT = eFrame::GLOBAL>
@@ -120,8 +109,6 @@ namespace cuvoxmap
             uint32_t y_axis_len;
             float resolution;
             bool use_gpu;
-            init_s() = default;
-            init_s(uint32_t x, uint32_t y, float res, bool gpu) : x_axis_len(x), y_axis_len(y), resolution(res), use_gpu(gpu) {}
         };
 
         struct param_s
@@ -312,6 +299,7 @@ namespace cuvoxmap
             return false;
         }
 
+        // TODO
         void distance_map_update_withCPU();
         void distance_map_update_withGPU();
 

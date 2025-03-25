@@ -8,7 +8,8 @@ import re, sys
 
 print("cuvoxmap")
 print("A Lightweight C++ library for robotics.")
-print("GPU-accelerated grid state map & translate with ring buffer \n")
+print("GPU-accelerated grid state map & translation with ring buffer \n")
+print("Supports various types of grid maps, including 2D and 3D")
 print("Usage: make <target> <options>")
 
 for line in sys.stdin:

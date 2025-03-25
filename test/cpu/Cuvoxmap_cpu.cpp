@@ -14,6 +14,9 @@ TEST_CASE("Cuvoxmap_cpu")
     cuvoxmap::cuvoxmap2D cmap{init};
     cmap.set_origin(Float2D{1.2f, 1.5f});
 
+    auto asdf = cuvoxmap::GPU_SUPPORT();
+    printf("asdf %d\n", asdf);
+
     using check = cuvoxmap::eCheck;
     using map = cuvoxmap::eMap;
     using frame = cuvoxmap::eFrame;

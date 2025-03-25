@@ -4,7 +4,7 @@
 
 using namespace cuvoxmap;
 
-TEST_CASE("Cuvoxmap_gpu")
+TEST_CASE("Cuvoxmap_gpu but cpu")
 {
     cuvoxmap::cuvoxmap2D::init_s init;
     init.x_axis_len = 10;
@@ -14,8 +14,8 @@ TEST_CASE("Cuvoxmap_gpu")
     cuvoxmap::cuvoxmap2D cmap{init};
     cmap.set_origin(Float2D{1.2f, 1.5f});
 
-    auto sdf = cuvoxmap::GPU_SUPPORT();
-   printf("asdf %d\n", sdf);
+    auto asdf = cuvoxmap::GPU_SUPPORT();
+    printf("asdf %d\n", asdf);
 
     using check = cuvoxmap::eCheck;
     using map = cuvoxmap::eMap;
