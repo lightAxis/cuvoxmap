@@ -3,6 +3,9 @@
 
 #include <cuvoxmap/utils/Vector.hpp>
 
+#include <thrust/host_vector.h>
+#include <thrust/device_vector.h>
+
 int get_idx(const cuvoxmap::Vector<int, 2> &vec, uint8_t idx)
 {
     return vec[idx];
@@ -67,8 +70,9 @@ TEST_CASE("Vectors host", "utils")
     }
 }
 
-__global__ void vector_test(cuvoxmap::Vector<int, 2> vec)
+__global__ void vector_test(cuvoxmap::Vector<int, 2> vec, bool *res)
 {
+    *res = false;
     if (!CUSTOM_TEST_KERNEL::KERNEL_TEST(vec[0], 1))
         return;
     if (!CUSTOM_TEST_KERNEL::KERNEL_TEST(vec[1], 2))
@@ -79,23 +83,39 @@ __global__ void vector_test(cuvoxmap::Vector<int, 2> vec)
         return;
     if (!CUSTOM_TEST_KERNEL::KERNEL_TEST(vec2[1], 2))
         return;
+    *res = true;
 }
 
-__global__ void vector_test_float(cuvoxmap::Vector<float, 2> vec)
+__global__ void vector_test_float(cuvoxmap::Vector<float, 2> vec, bool *res)
 {
+    *res = false;
     if (!CUSTOM_TEST_KERNEL::KERNEL_TEST(vec[0], 1.1f))
         return;
     if (!CUSTOM_TEST_KERNEL::KERNEL_TEST(vec[1], 2.2f))
         return;
+    *res = true;
 }
 
 TEST_CASE("Vectors device", "utils")
 {
+    thrust::host_vector<bool> host_res(1, true);
+    thrust::device_vector<bool> device_res = host_res;
+
     cuvoxmap::Vector<int, 2> v{1, 2};
-    vector_test<<<1, 1>>>(v);
+    vector_test<<<1, 1>>>(v, thrust::raw_pointer_cast(device_res.data()));
     cudaDeviceSynchronize();
+    host_res = device_res;
+    if (host_res[0] == false)
+    {
+        FAIL("Vector test failed");
+    }
 
     cuvoxmap::Vector<float, 2> v2{1.1f, 2.2f};
-    vector_test_float<<<1, 1>>>(v2);
+    vector_test_float<<<1, 1>>>(v2, thrust::raw_pointer_cast(device_res.data()));
     cudaDeviceSynchronize();
+    host_res = device_res;
+    if (host_res[0] == false)
+    {
+        FAIL("Vector test float failed");
+    }
 }

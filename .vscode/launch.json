@@ -8,7 +8,7 @@
             "name": "test",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/test/Cuvoxmap_gpu",
+            "program": "${workspaceFolder}/build/test/ArrayIndexing_cpu",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",

@@ -6,6 +6,8 @@ using namespace cuvoxmap;
 
 TEST_CASE("Cuvoxmap_cpu")
 {
+    using Param = cuvoxmap::CuvoxmapParamTmp<cuvoxmap::UseGPUTmp<false>, cuvoxmap::DimTmp<2,10,10>>;
+
     cuvoxmap::cuvoxmap2D::init_s init;
     init.x_axis_len = 10;
     init.y_axis_len = 10;
