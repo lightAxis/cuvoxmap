@@ -4,7 +4,6 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-
 #include <sensor_msgs/msg/point_cloud2.hpp>
 
 class cuvoxmapNode : public rclcpp::Node
@@ -97,7 +96,7 @@ private:
             ptr[2] = static_cast<float>(0);
             ptr[3] = map_.get_map_withIdx<cuvoxmap::getset::DST_FAST_LOC>(idx);
 
-            std::cout << "Point " << i << ": " << ptr[0] << ", " << ptr[1] << ", " << ptr[2] << ", " << ptr[3] << std::endl;
+            // std::cout << "Point " << i << ": " << ptr[0] << ", " << ptr[1] << ", " << ptr[2] << ", " << ptr[3] << std::endl;
         }
 
         publisher_->publish(msg);
