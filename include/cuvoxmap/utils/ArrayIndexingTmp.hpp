@@ -27,6 +27,8 @@ namespace cuvoxmap
             static_assert(axis < dim, "axis must be smaller than dim");
             return axis == 0 ? x : (axis == 1 ? y : z);
         }
+        __host__ __device__ static Indexing<dim> getIndexingInstance() { return Indexing<dim>{getAxisSizesVec()}; }
+        __host__ __device__ static Vector<uint32_t, dim> getAxisSizesVec() { return Vector<uint32_t, dim>{x, y, z}; }
         __host__ __device__ static uint32_t merge(const Vector<uint32_t, dim> &idx)
         {
             if constexpr (dim == 1)
@@ -163,6 +165,7 @@ namespace cuvoxmap
             static_assert(axis < dim, "axis must be smaller than dim");
             return axis == 0 ? total_x : (axis == 1 ? total_y : total_z);
         }
+        __host__ __device__ static IndexingBlock<dim> getIndexingBlockInstance() { return IndexingBlock{BlockIndexing::getIndexingInstance(), GridIndexing::getIndexingInstance()}; }
         __host__ __device__ static uint32_t merge(const Vector<uint32_t, dim> &idx)
         {
             // idx is mostly larger than block_dim

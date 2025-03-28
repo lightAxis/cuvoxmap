@@ -41,11 +41,6 @@ namespace cuvoxmap
     {
         static_assert(is_dim_tmp_v<T>, "T must be of type DimTmp");
 
-        // static constexpr uint8_t dim() { return T::dim; }
-        // static constexpr uint32_t x() { return T::x; }
-        // static constexpr uint32_t y() { return T::y; }
-        // static constexpr uint32_t z() { return T::z; }
-
         static constexpr uint8_t dim = T::dim;
         static constexpr uint32_t x = T::x;
         static constexpr uint32_t y = T::y;
