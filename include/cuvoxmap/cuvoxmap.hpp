@@ -1,5 +1,6 @@
 #pragma once
 
+#include "tmp/MapParamTmp.hpp"
 #include "cuvoxmap_param.hpp"
 
 #include "base/MapAllocator.hpp"

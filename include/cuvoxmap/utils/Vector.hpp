@@ -208,6 +208,26 @@ namespace cuvoxmap
             return *this;
         }
 
+        __host__ __device__ Vector<T, Dim> elementWiseMul(const Vector<T, Dim> &other) const
+        {
+            Vector<T, Dim> result;
+            for (uint8_t i = 0; i < Dim; i++)
+            {
+                result.data[i] = data[i] * other.data[i];
+            }
+            return result;
+        }
+
+        __host__ __device__ Vector<T, Dim> elementWiseDiv(const Vector<T, Dim> &other) const
+        {
+            Vector<T, Dim> result;
+            for (uint8_t i = 0; i < Dim; i++)
+            {
+                result.data[i] = data[i] / other.data[i];
+            }
+            return result;
+        }
+
         __host__ __device__ T dot(const Vector<T, Dim> &other) const
         {
             T result = 0;
